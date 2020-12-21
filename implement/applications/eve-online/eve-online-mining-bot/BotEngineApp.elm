@@ -1323,15 +1323,9 @@ itemHangarFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
-oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
-oreHoldFromInventoryWindow =
-    .leftTreeEntries
-        >> .uiNode
-        >> .uiNode
-        >> EveOnline.ParseUserInterface.getAllContainedDisplayTexts
-        >> List.any (String.toLower >> String.contains "ore hold")
-        >> List.head
-        >> Maybe.map .uiNode
+oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindowLeftTreeEntry -> Maybe UIElement
+oreHoldFromInventoryWindow treeEntry =
+    treeEntry.uiNode >> .uiNode >> EveOnline.ParseUserInterface.getAllContainedDisplayTexts >> List.any (String.toLower >> String.contains "ore hold")
 
 {-| The region of a ship entry in the inventory window can contain child nodes (e.g. 'Ore Hold').
 For this reason, we don't click on the center but stay close to the top.
