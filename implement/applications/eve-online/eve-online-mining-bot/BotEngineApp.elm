@@ -105,6 +105,9 @@ parseBotSettings =
          , ( "ore-hold-max-percent"
            , AppSettings.valueTypeInteger (\percent settings -> { settings | oreHoldMaxPercent = percent })
            )
+        , ( "fleet-hangar-max-percent"
+           , AppSettings.valueTypeInteger (\percent settings -> { settings | fleetHangarMaxPercent = percent })
+           )
          , ( "select-instance-pilot-name"
            , AppSettings.valueTypeString (\pilotName -> \settings -> { settings | selectInstancePilotName = Just pilotName })
            )
