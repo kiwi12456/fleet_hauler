@@ -465,9 +465,6 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                         case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                                             Nothing ->
                                                 endDecisionPath
-                                                    (actWithoutFurtherReadings
-                                                        ( "I see no item in the fleet hangar.")
-                                                    )
 
                                             Just itemInInventory ->
                                                 describeBranch "I see at least one item in the fleet hangar. Move this to the ore hold."
