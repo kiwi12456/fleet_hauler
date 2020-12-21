@@ -459,7 +459,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                             describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
                                 (case inventoryWindowWithFleetHangarSelected |> oreHoldFromInventoryWindow of
                                     Nothing ->
-                                        describeBranch "I do not see the ore hold in the inventory." askForHelpToGetUnstuck
+                                        describeBranch "I do not see the ore hold in the inventory2." askForHelpToGetUnstuck
 
                                     Just oreHold ->
                                         case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
