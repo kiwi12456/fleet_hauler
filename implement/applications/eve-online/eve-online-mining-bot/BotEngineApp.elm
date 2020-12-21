@@ -1323,11 +1323,9 @@ itemHangarFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
-oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
+oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.getAllContainedDisplayTexts -> Maybe UIElement
 oreHoldFromInventoryWindow =
-    .leftTreeEntries.children
-        >> List.filter (.text >> String.toLower >> String.contains "ore hold")
-        >> List.head
+        List.any (String.toLower >> String.contains "ore hold")
         >> Maybe.map .uiNode
 
 {-| The region of a ship entry in the inventory window can contain child nodes (e.g. 'Ore Hold').
