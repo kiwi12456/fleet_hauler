@@ -457,7 +457,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                         in
                         if 10 <= fillPercent then
                             describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
-                                (case inventoryWindowWithFleetHangarSelected |> inventoryWindowWithOreHoldSelectedFromGameClient of
+                                (case inventoryWindowWithFleetHangarSelected |> oreHoldFromInventoryWindow of
                                     Nothing ->
                                         describeBranch "I do not see the ore hold in the inventory2." askForHelpToGetUnstuck
 
@@ -1326,7 +1326,7 @@ itemHangarFromInventoryWindow =
 oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 oreHoldFromInventoryWindow =
     .leftTreeEntries
-        >> List.filter (.subCaptionLabelText >> String.toLower >> String.contains "ore")
+        >> List.filter (.text >> String.toLower >> String.contains "ore hold")
         >> List.head
         >> Maybe.map .uiNode
 
