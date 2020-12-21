@@ -466,9 +466,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                             Nothing ->
                                                 endDecisionPath
                                                     (actWithoutFurtherReadings
-                                                        ( "I see no item in the fleet hangar."
-                                                        , oreHold.uiNode |> clickOnUIElement MouseButtonLeft
-                                                        )
+                                                        ( "I see no item in the fleet hangar.")
                                                     )
 
                                             Just itemInInventory ->
