@@ -464,7 +464,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                     Just fleetHangar ->
                                         case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                                             Nothing ->
-                                                describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore.")
+                                                describeBranch ("There are no items in the fleet hangar.")
                                                     (case context.readingFromGameClient.targets |> List.head of
                                                         Nothing ->
                                                             describeBranch "I see no locked target."
