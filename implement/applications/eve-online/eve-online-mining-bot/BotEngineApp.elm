@@ -530,33 +530,66 @@ ensureOreHoldIsSelectedInInventoryWindow readingFromGameClient continueWithInven
                                             |> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild
                                             |> List.filter (.text >> String.toLower >> String.contains "ore hold")
                                             |> List.head
+                                    maybeFleetHangarTreeEntry =
+                                        activeShipTreeEntry.children
+                                            |> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild
+                                            |> List.filter (.text >> String.toLower >> String.contains "fleet hangar")
+                                            |> List.head
                                 in
-                                case maybeOreHoldTreeEntry of
+                                case maybeFleetHangarTreeEntry of
                                     Nothing ->
-                                        describeBranch "I do not see the ore hold under the active ship in the inventory."
-                                            (case activeShipTreeEntry.toggleBtn of
-                                                Nothing ->
-                                                    describeBranch "I do not see the toggle button to expand the active ship tree entry."
-                                                        askForHelpToGetUnstuck
+                                        case maybeOreHoldTreeEntry of
+                                            Nothing ->
+                                                describeBranch "I do not see the ore hold under the active ship in the inventory."
+                                                    (case activeShipTreeEntry.toggleBtn of
+                                                        Nothing ->
+                                                            describeBranch "I do not see the toggle button to expand the active ship tree entry."
+                                                                askForHelpToGetUnstuck
 
-                                                Just toggleBtn ->
-                                                    endDecisionPath
-                                                        (actWithoutFurtherReadings
-                                                            ( "Click the toggle button to expand."
-                                                            , toggleBtn |> clickOnUIElement MouseButtonLeft
-                                                            )
+                                                        Just toggleBtn ->
+                                                            endDecisionPath
+                                                                (actWithoutFurtherReadings
+                                                                    ( "Click the toggle button to expand."
+                                                                    , toggleBtn |> clickOnUIElement MouseButtonLeft
+                                                                    )
+                                                                )
+                                                    )
+
+                                            Just oreHoldTreeEntry ->
+                                                endDecisionPath
+                                                    (actWithoutFurtherReadings
+                                                        ( "Click the tree entry representing the ore hold."
+                                                        , oreHoldTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
                                                         )
-                                            )
+                                                    )
+                                    Just fleetHangarTreeEntry ->
+                                        fleetHangarTreeEntry.uiNode 
+                                            |> clickOnUIElement MouseButtonLeft
+                                                |> case maybeOreHoldTreeEntry of
+                                                    Nothing ->
+                                                        describeBranch "I do not see the ore hold under the active ship in the inventory."
+                                                            (case activeShipTreeEntry.toggleBtn of
+                                                                Nothing ->
+                                                                    describeBranch "I do not see the toggle button to expand the active ship tree entry."
+                                                                        askForHelpToGetUnstuck
 
-                                    Just oreHoldTreeEntry ->
-                                        endDecisionPath
-                                            (actWithoutFurtherReadings
-                                                ( "Click the tree entry representing the ore hold."
-                                                , oreHoldTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
-                                                )
-                                            )
+                                                                Just toggleBtn ->
+                                                                    endDecisionPath
+                                                                        (actWithoutFurtherReadings
+                                                                            ( "Click the toggle button to expand."
+                                                                            , toggleBtn |> clickOnUIElement MouseButtonLeft
+                                                                            )
+                                                                        )
+                                                            )
+
+                                                    Just oreHoldTreeEntry ->
+                                                        endDecisionPath
+                                                            (actWithoutFurtherReadings
+                                                                ( "Click the tree entry representing the ore hold."
+                                                                , oreHoldTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                                )
+                                                            )
                         )
-
 
 lockTargetFromOverviewEntryAndEnsureIsInRange : ReadingFromGameClient -> Int -> OverviewWindowEntry -> DecisionPathNode
 lockTargetFromOverviewEntryAndEnsureIsInRange readingFromGameClient rangeInMeters overviewEntry =
