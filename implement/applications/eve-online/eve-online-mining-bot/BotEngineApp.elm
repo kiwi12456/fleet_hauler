@@ -1325,8 +1325,9 @@ itemHangarFromInventoryWindow =
 
 oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 oreHoldFromInventoryWindow =
-    .leftTreeEntries
-        >> List.filter( .children >> .text >> String.toLower >> String.contains "ore hold")
+    .leftTreeEntries.children
+        >> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild
+        >> List.filter(.text >> String.toLower >> String.contains "ore hold")
         >> List.head
         >> Maybe.map .uiNode
     
