@@ -457,7 +457,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                         in
                         if 10 <= fillPercent then
                             describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
-                                case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
+                                (case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                                     Nothing ->
                                         describeBranch "I see no item in the fleet hangar. Check if we should undock."
                                             (continueIfShouldHide
@@ -481,6 +481,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                     )
                                                 )
                                             )
+                                )
                                 
 
                         else
