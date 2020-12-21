@@ -457,7 +457,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                         in
                         if 10 <= fillPercent then
                             describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
-                                (case inventoryWindowWithFleetHangarSelected |> oreHoldFromInventoryWindow of
+                                (case inventoryWindowWithFleetHangarSelected |> inventoryWindowWithOreHoldSelectedFromGameClient of
                                     Nothing ->
                                         describeBranch "I do not see the ore hold in the inventory2." askForHelpToGetUnstuck
 
