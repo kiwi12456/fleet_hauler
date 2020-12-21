@@ -1323,7 +1323,7 @@ itemHangarFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
-oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> UIElement
+oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 oreHoldFromInventoryWindow =
     .leftTreeEntries
         >> .uiNode
