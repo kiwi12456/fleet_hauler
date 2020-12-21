@@ -72,7 +72,6 @@ defaultBotSettings =
     , miningModuleRange = 5000
     , botStepDelayMilliseconds = 4000
     , oreHoldMaxPercent = 99
-    , fleetHangarMaxPercent = 10
     , selectInstancePilotName = Nothing
     }
 
@@ -104,9 +103,6 @@ parseBotSettings =
            )
          , ( "ore-hold-max-percent"
            , AppSettings.valueTypeInteger (\percent settings -> { settings | oreHoldMaxPercent = percent })
-           )
-        , ( "fleet-hangar-max-percent"
-           , AppSettings.valueTypeInteger (\percent settings -> { settings | fleetHangarMaxPercent = percent })
            )
          , ( "select-instance-pilot-name"
            , AppSettings.valueTypeString (\pilotName -> \settings -> { settings | selectInstancePilotName = Just pilotName })
@@ -457,9 +453,9 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                     Just fillPercent ->
                         let
                             describeThresholdToUnload =
-                                (context.eventContext.appSettings.fleetHangarMaxPercent |> String.fromInt) ++ "%"
+                                (10 |> String.fromInt) ++ "%"
                         in
-                        if context.eventContext.appSettings.fleetHangarMaxPercent <= fillPercent then
+                        if 10 <= fillPercent then
                             describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
                                 (case inventoryWindowWithFleetHangarSelected |> oreHoldFromInventoryWindow of
                                     Nothing ->
