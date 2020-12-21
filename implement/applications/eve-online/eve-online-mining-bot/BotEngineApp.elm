@@ -514,7 +514,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                 )
 
                         else
-                            describeBranch ("The fleet hangar is not yet filled2 " ++ describeThresholdToUnload ++ ". Continue.")
+                            describeBranch ("The fleet hangar is not yet filled " ++ describeThresholdToUnload ++ ". Continue.")
                                 (ensureFleetHangarIsSelectedInInventoryWindow
                                     context.readingFromGameClient
                                     (inSpaceWithOreHoldSelected context seeUndockingComplete)
@@ -654,7 +654,8 @@ ensureFleetHangarIsSelectedInInventoryWindow : ReadingFromGameClient -> (EveOnli
 ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient continueWithInventoryWindow =
     case readingFromGameClient |> inventoryWindowWithFleetHangarSelectedFromGameClient of
         Just inventoryWindow ->
-            continueWithInventoryWindow inventoryWindow
+            describeBranch "Fleet hangar found"
+                (continueWithInventoryWindow inventoryWindow)
 
         Nothing ->
             case readingFromGameClient.inventoryWindows |> List.head of
