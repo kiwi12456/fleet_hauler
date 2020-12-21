@@ -72,6 +72,7 @@ defaultBotSettings =
     , miningModuleRange = 5000
     , botStepDelayMilliseconds = 4000
     , oreHoldMaxPercent = 99
+    , fleetHangarMaxPercent = 10
     , selectInstancePilotName = Nothing
     }
 
@@ -178,7 +179,7 @@ miningBotDecisionRoot context =
                             }
                             context
                             |> Maybe.withDefault
-                                (ensureOreHoldIsSelectedInInventoryWindow
+                                (ensureFleetHangarIsSelectedInInventoryWindow
                                     context.readingFromGameClient
                                     (inSpaceWithOreHoldSelected context seeUndockingComplete)
                                 )
@@ -427,6 +428,71 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                 )
                                 )
 
+inSpaceWithFleetHangarSelected : BotDecisionContext -> SeeUndockingComplete -> EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode
+inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithFleetHangarSelected =
+    if seeUndockingComplete.shipUI |> shipUIIndicatesShipIsWarpingOrJumping then
+        describeBranch "I see we are warping."
+            ([ returnDronesToBay context.readingFromGameClient
+             , readShipUIModuleButtonTooltips context
+             ]
+                |> List.filterMap identity
+                |> List.head
+                |> Maybe.withDefault waitForProgressInGame
+            )
+
+    else
+        case context |> knownModulesToActivateAlways |> List.filter (Tuple.second >> .isActive >> Maybe.withDefault False >> not) |> List.head of
+            Just ( inactiveModuleMatchingText, inactiveModule ) ->
+                describeBranch ("I see inactive module '" ++ inactiveModuleMatchingText ++ "' to activate always. Activate it.")
+                    (clickModuleButtonButWaitIfClickedInPreviousStep context inactiveModule)
+
+            Nothing ->
+                case inventoryWindowWithFleetHangarSelected |> capacityGaugeUsedPercent of
+                    Nothing ->
+                        describeBranch "I do not see the fleet hangar capacity gauge." askForHelpToGetUnstuck
+
+                    Just fillPercent ->
+                        let
+                            describeThresholdToUnload =
+                                (context.eventContext.appSettings.fleetHangarMaxPercent |> String.fromInt) ++ "%"
+                        in
+                        if context.eventContext.appSettings.fleetHangarMaxPercent <= fillPercent then
+                            describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
+                                (case inventoryWindowWithFleetHangarSelected |> oreHoldFromInventoryWindow of
+                                    Nothing ->
+                                        describeBranch "I do not see the ore hold in the inventory." askForHelpToGetUnstuck
+
+                                    Just oreHold ->
+                                        case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
+                                            Nothing ->
+                                                endDecisionPath
+                                                    (actWithoutFurtherReadings
+                                                        ( "I see no item in the fleet hangar."
+                                                        , oreHold.uiNode |> clickOnUIElement MouseButtonLeft
+                                                        )
+                                                    )
+
+                                            Just itemInInventory ->
+                                                describeBranch "I see at least one item in the fleet hangar. Move this to the ore hold."
+                                                    (endDecisionPath
+                                                        (actWithoutFurtherReadings
+                                                            ( "Drag and drop."
+                                                            , EffectOnWindow.effectsForDragAndDrop
+                                                                { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                                                , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
+                                                                , mouseButton = MouseButtonLeft
+                                                                }
+                                                            )
+                                                        )
+                                                    )
+                                )
+
+                        else
+                            describeBranch ("The fleet hangar is not yet filled " ++ describeThresholdToUnload ++ ". Continue.")
+                                (ensureFleetHangarIsSelectedInInventoryWindow
+                                    context.readingFromGameClient
+                                    (inSpaceWithOreHoldSelected context seeUndockingComplete)
+                                )
 
 unlockTargetsNotForMining : BotDecisionContext -> Maybe DecisionPathNode
 unlockTargetsNotForMining context =
@@ -530,6 +596,54 @@ ensureOreHoldIsSelectedInInventoryWindow readingFromGameClient continueWithInven
                                             |> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild
                                             |> List.filter (.text >> String.toLower >> String.contains "ore hold")
                                             |> List.head
+                                in
+                                case maybeOreHoldTreeEntry of
+                                    Nothing ->
+                                        describeBranch "I do not see the ore hold under the active ship in the inventory."
+                                            (case activeShipTreeEntry.toggleBtn of
+                                                Nothing ->
+                                                    describeBranch "I do not see the toggle button to expand the active ship tree entry."
+                                                        askForHelpToGetUnstuck
+
+                                                Just toggleBtn ->
+                                                    endDecisionPath
+                                                        (actWithoutFurtherReadings
+                                                            ( "Click the toggle button to expand."
+                                                            , toggleBtn |> clickOnUIElement MouseButtonLeft
+                                                            )
+                                                        )
+                                            )
+
+                                    Just oreHoldTreeEntry ->
+                                        endDecisionPath
+                                            (actWithoutFurtherReadings
+                                                ( "Click the tree entry representing the ore hold."
+                                                , oreHoldTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                )
+                                            )
+                        )
+
+
+ensureFleetHangarIsSelectedInInventoryWindow : ReadingFromGameClient -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
+ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient continueWithInventoryWindow =
+    case readingFromGameClient |> inventoryWindowWithFleetHangarSelectedFromGameClient of
+        Just inventoryWindow ->
+            continueWithInventoryWindow inventoryWindow
+
+        Nothing ->
+            case readingFromGameClient.inventoryWindows |> List.head of
+                Nothing ->
+                    describeBranch "I do not see an inventory window. Please open an inventory window." askForHelpToGetUnstuck
+
+                Just inventoryWindow ->
+                    describeBranch
+                        "Fleet hangar is not selected. Select the fleet hangar."
+                        (case inventoryWindow |> activeShipTreeEntryFromInventoryWindow of
+                            Nothing ->
+                                describeBranch "I do not see the active ship in the inventory." askForHelpToGetUnstuck
+
+                            Just activeShipTreeEntry ->
+                                let
                                     maybeFleetHangarTreeEntry =
                                         activeShipTreeEntry.children
                                             |> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild
@@ -538,58 +652,30 @@ ensureOreHoldIsSelectedInInventoryWindow readingFromGameClient continueWithInven
                                 in
                                 case maybeFleetHangarTreeEntry of
                                     Nothing ->
-                                        case maybeOreHoldTreeEntry of
-                                            Nothing ->
-                                                describeBranch "I do not see the ore hold under the active ship in the inventory."
-                                                    (case activeShipTreeEntry.toggleBtn of
-                                                        Nothing ->
-                                                            describeBranch "I do not see the toggle button to expand the active ship tree entry."
-                                                                askForHelpToGetUnstuck
+                                        describeBranch "I do not see the fleet hangar under the active ship in the inventory."
+                                            (case activeShipTreeEntry.toggleBtn of
+                                                Nothing ->
+                                                    describeBranch "I do not see the toggle button to expand the active ship tree entry."
+                                                        askForHelpToGetUnstuck
 
-                                                        Just toggleBtn ->
-                                                            endDecisionPath
-                                                                (actWithoutFurtherReadings
-                                                                    ( "Click the toggle button to expand."
-                                                                    , toggleBtn |> clickOnUIElement MouseButtonLeft
-                                                                    )
-                                                                )
-                                                    )
-
-                                            Just oreHoldTreeEntry ->
-                                                endDecisionPath
-                                                    (actWithoutFurtherReadings
-                                                        ( "Click the tree entry representing the ore hold."
-                                                        , oreHoldTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                Just toggleBtn ->
+                                                    endDecisionPath
+                                                        (actWithoutFurtherReadings
+                                                            ( "Click the toggle button to expand."
+                                                            , toggleBtn |> clickOnUIElement MouseButtonLeft
+                                                            )
                                                         )
-                                                    )
+                                            )
+
                                     Just fleetHangarTreeEntry ->
-                                        fleetHangarTreeEntry.uiNode 
-                                            |> clickOnUIElement MouseButtonLeft
-                                                |> case maybeOreHoldTreeEntry of
-                                                    Nothing ->
-                                                        describeBranch "I do not see the ore hold under the active ship in the inventory."
-                                                            (case activeShipTreeEntry.toggleBtn of
-                                                                Nothing ->
-                                                                    describeBranch "I do not see the toggle button to expand the active ship tree entry."
-                                                                        askForHelpToGetUnstuck
-
-                                                                Just toggleBtn ->
-                                                                    endDecisionPath
-                                                                        (actWithoutFurtherReadings
-                                                                            ( "Click the toggle button to expand."
-                                                                            , toggleBtn |> clickOnUIElement MouseButtonLeft
-                                                                            )
-                                                                        )
-                                                            )
-
-                                                    Just oreHoldTreeEntry ->
-                                                        endDecisionPath
-                                                            (actWithoutFurtherReadings
-                                                                ( "Click the tree entry representing the ore hold."
-                                                                , oreHoldTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
-                                                                )
-                                                            )
+                                        endDecisionPath
+                                            (actWithoutFurtherReadings
+                                                ( "Click the tree entry representing the fleet hangar."
+                                                , oreHoldTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                )
+                                            )
                         )
+
 
 lockTargetFromOverviewEntryAndEnsureIsInRange : ReadingFromGameClient -> Int -> OverviewWindowEntry -> DecisionPathNode
 lockTargetFromOverviewEntryAndEnsureIsInRange readingFromGameClient rangeInMeters overviewEntry =
@@ -1178,11 +1264,19 @@ inventoryWindowWithOreHoldSelectedFromGameClient =
         >> List.filter inventoryWindowSelectedContainerIsOreHold
         >> List.head
 
+inventoryWindowWithFleetHangarSelectedFromGameClient : ReadingFromGameClient -> Maybe EveOnline.ParseUserInterface.InventoryWindow
+inventoryWindowWithFleetHangarSelectedFromGameClient =
+    .inventoryWindows
+        >> List.filter inventoryWindowSelectedContainerIsFleetHangar
+        >> List.head
 
 inventoryWindowSelectedContainerIsOreHold : EveOnline.ParseUserInterface.InventoryWindow -> Bool
 inventoryWindowSelectedContainerIsOreHold =
     .subCaptionLabelText >> Maybe.map (String.toLower >> String.contains "ore hold") >> Maybe.withDefault False
 
+inventoryWindowSelectedContainerIsFleetHangar : EveOnline.ParseUserInterface.InventoryWindow -> Bool
+inventoryWindowSelectedContainerIsFleetHangar =
+    .subCaptionLabelText >> Maybe.map (String.toLower >> String.contains "fleet hangar") >> Maybe.withDefault False
 
 selectedContainerFirstItemFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 selectedContainerFirstItemFromInventoryWindow =
@@ -1207,6 +1301,12 @@ itemHangarFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
+oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
+oreHoldFromInventoryWindow =
+    .leftTreeEntries
+        >> List.filter (.text >> String.toLower >> String.contains "ore hold")
+        >> List.head
+        >> Maybe.map .uiNode
 
 {-| The region of a ship entry in the inventory window can contain child nodes (e.g. 'Ore Hold').
 For this reason, we don't click on the center but stay close to the top.
