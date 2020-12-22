@@ -505,16 +505,38 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                             (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
                                                                 |> Maybe.withDefault
                                                                     (endDecisionPath
-                                                                        (actWithoutFurtherReadings
-                                                                            ( "Drag and drop."
-                                                                            , EffectOnWindow.effectsForDragAndDrop
-                                                                                { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                                                                , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
-                                                                                , mouseButton = MouseButtonLeft
+                                                                        (Act
+                                                                            { firstAction =
+                                                                                    [ ( "Drag and drop."
+                                                                                    , EffectOnWindow.effectsForDragAndDrop
+                                                                                        { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                                                                        , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
+                                                                                        , mouseButton = MouseButtonLeft
+                                                                                        }
+                                                                                    )
+                                                                                    ]
+                                                                                , followingSteps =
+                                                                                    [ ( "Check Ore Hold."
+                                                                                    , (ensureFleetHangarIsSelectedInInventoryWindow
+                                                                                            context
+                                                                                            (inSpaceWithFleetHangarSelected context seeUndockingComplete)
+                                                                                        )
+                                                                                    )
+                                                                                    ]
                                                                                 }
-                                                                            )
                                                                         )
                                                                     )
+                                                                    -- (endDecisionPath
+                                                                    --     (actWithoutFurtherReadings
+                                                                    --         ( "Drag and drop."
+                                                                    --         , EffectOnWindow.effectsForDragAndDrop
+                                                                    --             { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                                                    --             , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
+                                                                    --             , mouseButton = MouseButtonLeft
+                                                                    --             }
+                                                                    --         )
+                                                                    --     )
+                                                                    -- )
                                                             ) 
 
                                                     -- Just fleetCommanderInOverview ->
