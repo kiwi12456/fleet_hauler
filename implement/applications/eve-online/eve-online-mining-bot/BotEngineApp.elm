@@ -507,16 +507,17 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                     (endDecisionPath
                                                                         (actWithoutFurtherReadings
                                                                             ( "Drag and drop."
-                                                                            , EffectOnWindow.effectsForDragAndDrop
+                                                                            , [[EffectOnWindow.effectsForDragAndDrop
                                                                                 { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 , mouseButton = MouseButtonLeft
-                                                                                }
-                                                                                ++ [EffectOnWindow.effectsMouseClickAtLocation MouseButtonLeft 
+                                                                                }]
+                                                                                ,   [EffectOnWindow.effectsMouseClickAtLocation MouseButtonLeft 
                                                                                     { x = oreHold.totalDisplayRegion.x
                                                                                     , y = oreHold.totalDisplayRegion.y
                                                                                     }
                                                                                     ]
+                                                                                ]
                                                                             )
                                                                         )
                                                                     )
