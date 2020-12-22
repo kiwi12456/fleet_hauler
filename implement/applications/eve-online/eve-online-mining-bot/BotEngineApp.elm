@@ -178,16 +178,20 @@ miningBotDecisionRoot context =
                             }
                             context
                             |> Maybe.withDefault
-                                (if (inventoryWindowWithOreHoldSelectedFromGameClient2 |> inventoryWindowSelectedContainerIsOreHold) then
-                                    (ensureFleetHangarIsSelectedInInventoryWindow
-                                        context
-                                        (inSpaceWithFleetHangarSelected context seeUndockingComplete)
-                                    )
-                                else
-                                    (ensureFleetHangarIsSelectedInInventoryWindow
-                                        context
-                                        (inSpaceWithFleetHangarSelected context seeUndockingComplete)
-                                    )
+                                (case context.readingFromGameClient |> inventoryWindowWithOreHoldSelectedFromGameClient of
+                                    Just inventoryWindow ->
+                                        (ensureOreHoldIsSelectedInInventoryWindow
+                                            context
+                                            (inSpaceWithOreHoldSelected context seeUndockingComplete)
+                                        )
+
+                                    Nothing ->
+
+                                        (ensureFleetHangarIsSelectedInInventoryWindow
+                                            context
+                                            (inSpaceWithFleetHangarSelected context seeUndockingComplete)
+                                        )
+                                
                                 )
                 }
                 context.readingFromGameClient
@@ -1393,12 +1397,6 @@ capacityGaugeUsedPercent =
 
 inventoryWindowWithOreHoldSelectedFromGameClient : ReadingFromGameClient -> Maybe EveOnline.ParseUserInterface.InventoryWindow
 inventoryWindowWithOreHoldSelectedFromGameClient =
-    .inventoryWindows
-        >> List.filter inventoryWindowSelectedContainerIsOreHold
-        >> List.head
-
-inventoryWindowWithOreHoldSelectedFromGameClient2 : ReadingFromGameClient -> EveOnline.ParseUserInterface.InventoryWindow
-inventoryWindowWithOreHoldSelectedFromGameClient2 =
     .inventoryWindows
         >> List.filter inventoryWindowSelectedContainerIsOreHold
         >> List.head
