@@ -457,17 +457,38 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                             Just fleetHangar ->
                                 case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                                     Nothing ->
-                                        describeBranch "I see no item in the ore hold. Check if we should undock."
-                                            (continueIfShouldHide
-                                                { ifShouldHide =
-                                                    describeBranch "Stay docked." waitForProgressInGame
-                                                }
-                                                context
-                                                |> Maybe.withDefault (undockUsingStationWindow context)
+                                        describeBranch "I see no item in the fleet hangar. Continue to mine ore."
+                                            (case context.readingFromGameClient.targets |> List.head of
+                                                Nothing ->
+                                                    describeBranch "I see no locked target."
+                                                        (travelToMiningSiteAndLaunchDronesAndTargetAsteroid context)
+
+                                                Just _ ->
+                                                    {- Depending on the UI configuration, the game client might automatically target rats.
+                                                    To avoid these targets interfering with mining, unlock them here.
+                                                    -}
+                                                    unlockTargetsNotForMining context
+                                                        |> Maybe.withDefault
+                                                            (describeBranch "I see a locked target."
+                                                                (case context |> knownMiningModules |> List.filter (.isActive >> Maybe.withDefault False >> not) |> List.head of
+                                                                    Nothing ->
+                                                                        describeBranch "All known mining modules are active."
+                                                                            (readShipUIModuleButtonTooltips context
+                                                                                |> Maybe.withDefault
+                                                                                    (launchDronesAndSendThemToMine context.readingFromGameClient
+                                                                                        |> Maybe.withDefault waitForProgressInGame
+                                                                                    )
+                                                                            )
+
+                                                                    Just inactiveModule ->
+                                                                        describeBranch "I see an inactive mining module. Activate it."
+                                                                            (clickModuleButtonButWaitIfClickedInPreviousStep context inactiveModule)
+                                                                )
+                                                            )
                                             )
 
                                     Just itemInInventory ->
-                                        describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
+                                        describeBranch "I see at least one item in the ore hold. Move this to the ore hold."
                                             (endDecisionPath
                                                 (actWithoutFurtherReadings
                                                     ( "Drag and drop."
