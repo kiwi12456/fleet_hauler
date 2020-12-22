@@ -1309,6 +1309,7 @@ fleetHangarFromInventoryWindow =
         >> List.filter (.text >> String.toLower >> String.contains "fleet hangar")
         >> List.head
         >> Maybe.map .uiNode
+        >> Maybe.andThen .children
 
 {-| The region of a ship entry in the inventory window can contain child nodes (e.g. 'Ore Hold').
 For this reason, we don't click on the center but stay close to the top.
