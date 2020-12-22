@@ -508,7 +508,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                         (Act
                                                                             { firstAction =
                                                                                     [ ( "Drag and drop."
-                                                                                        , [ EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonLeft
+                                                                                        , [ EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonRight
                                                                                                 { x = itemInInventory.totalDisplayRegion.x
                                                                                                 , y = itemInInventory.totalDisplayRegion.y
                                                                                                 }
