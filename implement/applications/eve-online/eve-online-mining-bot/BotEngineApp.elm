@@ -453,18 +453,18 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                         Nothing ->
                             describeBranch "I do not see the ore hold in the inventory." askForHelpToGetUnstuck
                         Just oreholdPercent ->
-                            let
-                                describeOreThresholdToUnload =
-                                    (context.eventContext.appSettings.oreHoldMaxPercent |> String.fromInt) ++ "%"
-                            in
-                            if context.eventContext.appSettings.oreHoldMaxPercent <= oreholdPercent then
-                                describeBranch ("The ore hold is filled at least " ++ describeOreThresholdToUnload ++ ". Unload the ore.")
-                                    (returnDronesToBay context.readingFromGameClient
-                                        |> Maybe.withDefault (dockToUnloadOre context)
-                                    )
-                            else
-                                describeBranch ("The ore hold is not yet filled at " ++ describeOreThresholdToUnload ++ ". The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
-                                -- describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
+                            -- let
+                            --     describeOreThresholdToUnload =
+                            --         (context.eventContext.appSettings.oreHoldMaxPercent |> String.fromInt) ++ "%"
+                            -- in
+                            -- if context.eventContext.appSettings.oreHoldMaxPercent <= oreholdPercent then
+                            --     describeBranch ("The ore hold is filled at least " ++ describeOreThresholdToUnload ++ ". Unload the ore.")
+                            --         (returnDronesToBay context.readingFromGameClient
+                            --             |> Maybe.withDefault (dockToUnloadOre context)
+                            --         )
+                            -- else
+                            --     describeBranch ("The ore hold is not yet filled at " ++ describeOreThresholdToUnload ++ ". The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
+                                describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
                                     (case inventoryWindowWithFleetHangarSelected |> fleetHangarFromInventoryWindow of
                                         Nothing ->
                                             describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
