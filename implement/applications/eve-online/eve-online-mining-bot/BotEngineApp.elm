@@ -507,14 +507,8 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                     (endDecisionPath
                                                                         (Act
                                                                             { firstAction =
-                                                                                    [ ( "Drag and drop."
-                                                                                        , [ EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonRight
-                                                                                                { x = itemInInventory.totalDisplayRegion.x
-                                                                                                , y = itemInInventory.totalDisplayRegion.y
-                                                                                                }
-                                                                                            ]
-                                                                                        )
-                                                                                    ]
+                                                                                itemInInventory
+                                                                                    |> clickOnUIElement MouseButtonRight                                                                                    
                                                                                 , followingSteps =
                                                                                     [ ( "Check Ore Hold."
                                                                                     , (ensureFleetHangarIsSelectedInInventoryWindow
