@@ -70,7 +70,7 @@ defaultBotSettings =
     , hideWhenNeutralInLocal = Nothing
     , targetingRange = 8000
     , miningModuleRange = 5000
-    , botStepDelayMilliseconds = 4000
+    , botStepDelayMilliseconds = 2000
     , oreHoldMaxPercent = 99
     , selectInstancePilotName = Nothing
     }
@@ -943,6 +943,21 @@ warpToWatchlistEntry context =
                     (useMenuEntryWithTextContaining "Warp to Member Within"
                         (useMenuEntryWithTextContaining "Within 0 m" menuCascadeCompleted)
                     )
+                    context.readingFromGameClient
+                )
+
+        Nothing ->
+            describeBranch "I see no entry in the watchlist panel. Warping directly to mining site."
+                (warpToMiningSite context.readingFromGameClient)
+
+approachWatchlistEntry : BotDecisionContext -> DecisionPathNode
+approachWatchlistEntry context =
+    case context.readingFromGameClient.watchListPanel |> Maybe.andThen (.entries >> List.head) of
+        Just watchlistEntry ->
+            describeBranch "Approach entry in watchlist panel."
+                (useContextMenuCascade
+                    ( "Watchlist entry", watchlistEntry )
+                    (useMenuEntryWithTextContaining "Approach" menuCascadeCompleted)
                     context.readingFromGameClient
                 )
 
