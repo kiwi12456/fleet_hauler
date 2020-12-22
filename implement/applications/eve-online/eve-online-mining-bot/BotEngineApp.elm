@@ -463,7 +463,8 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                     --                     |> Maybe.withDefault (dockToUnloadOre context)
                     --                 )
                     --         else
-                                describeBranch ("The ore hold is not yet filled at " ++ describeOreThresholdToUnload ++ ". The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
+                                -- describeBranch ("The ore hold is not yet filled at " ++ describeOreThresholdToUnload ++ ". The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
+                                describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
                                     (case inventoryWindowWithFleetHangarSelected |> fleetHangarFromInventoryWindow of
                                         Nothing ->
                                             describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
