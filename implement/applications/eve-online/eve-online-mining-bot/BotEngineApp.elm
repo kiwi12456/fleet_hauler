@@ -303,9 +303,9 @@ closeMessageBox readingFromGameClient =
                     )
             )
 
-closeHybridWindow : BotDecisionContext -> Maybe DecisionPathNode
-closeHybridWindow context =
-    context.readingFromGameClient.hybridWindows
+closeHybridWindow : ReadingFromGameClient -> Maybe DecisionPathNode
+closeHybridWindow readingFromGameClient =
+    readingFromGameClient.hybridWindows
         |> List.head
         |> Maybe.map
             (\hybridWindow ->
@@ -324,13 +324,7 @@ closeHybridWindow context =
                             endDecisionPath
                                 (actWithoutFurtherReadings
                                     ( "Click on button '" ++ (buttonToUse.mainText |> Maybe.withDefault "") ++ "'."
-                                    , buttonToUse.uiNode 
-                                        |> clickOnUIElement MouseButtonLeft
-                                            |> \seeUndockingComplete ->
-                                                (ensureOreHoldIsSelectedInInventoryWindow
-                                                    context
-                                                    (inSpaceWithOreHoldSelected context seeUndockingComplete)
-                                                )
+                                    , buttonToUse.uiNode |> clickOnUIElement MouseButtonLeft
                                     )
                                 )
                     )
