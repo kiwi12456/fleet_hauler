@@ -665,11 +665,11 @@ ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient continueWithI
                                                         )
                                             )
 
-                                    Just FleetHangarTreeEntry ->
+                                    Just fleetHangarTreeEntry ->
                                         endDecisionPath
                                             (actWithoutFurtherReadings
                                                 ( "Click the tree entry representing the fleet hangar."
-                                                , FleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
                                                 )
                                             )
                         )
