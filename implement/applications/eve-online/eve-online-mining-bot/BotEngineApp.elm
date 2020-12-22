@@ -179,7 +179,7 @@ miningBotDecisionRoot context =
                             context
                             |> Maybe.withDefault
                                 (ensureFleetHangarIsSelectedInInventoryWindow
-                                    context.readingFromGameClient
+                                    context
                                     (inSpaceWithFleetHangarSelected context seeUndockingComplete)
                                 )
                 }
@@ -707,15 +707,15 @@ ensureOreHoldIsSelectedInInventoryWindow readingFromGameClient continueWithInven
                         )
 
 
-ensureFleetHangarIsSelectedInInventoryWindow : ReadingFromGameClient -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
-ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient continueWithInventoryWindow =
-    case readingFromGameClient |> inventoryWindowWithFleetHangarSelectedFromGameClient of
+ensureFleetHangarIsSelectedInInventoryWindow : context -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
+ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow =
+    case context.readingFromGameClient |> inventoryWindowWithFleetHangarSelectedFromGameClient of
         Just inventoryWindow ->
             describeBranch "Fleet hangar found"
                 (continueWithInventoryWindow inventoryWindow)
 
         Nothing ->
-            case readingFromGameClient.inventoryWindows |> List.head of
+            case context.readingFromGameClient.inventoryWindows |> List.head of
                 Nothing ->
                     describeBranch "I do not see an inventory window. Please open an inventory window." askForHelpToGetUnstuck
 
