@@ -29,7 +29,6 @@ import EveOnline.AppFramework
         , SeeUndockingComplete
         , ShipModulesMemory
         , UIElement
-        , UIElementRegion
         , actWithoutFurtherReadings
         , askForHelpToGetUnstuck
         , branchDependingOnDockedOrInSpace
@@ -458,7 +457,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                             Just fleetHangar ->
                                 describeBranch "Select all ores in the fleet hangar."
                                     (useContextMenuCascade
-                                        ( "Fleet Hangar", fleetHangar )
+                                        ( "Fleet Hangar", fleetHangar.totalDisplayRegion.x + 20 )
                                         (useMenuEntryWithTextContaining "Warp to Member Within"
                                             (useMenuEntryWithTextContaining "Within 0 m" menuCascadeCompleted)
                                         )
@@ -1303,14 +1302,13 @@ oreHoldFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
-fleetHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElementRegion
+fleetHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 fleetHangarFromInventoryWindow =
     .leftTreeEntries
         >> List.concatMap (.children >> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild)
         >> List.filter (.text >> String.toLower >> String.contains "fleet hangar")
         >> List.head
         >> Maybe.map .uiNode
-        >> Maybe.andThen .children
 
 {-| The region of a ship entry in the inventory window can contain child nodes (e.g. 'Ore Hold').
 For this reason, we don't click on the center but stay close to the top.
