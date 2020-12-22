@@ -457,7 +457,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                             Just fleetHangar ->
                                 describeBranch "Select all ores in the fleet hangar."
                                     (useContextMenuCascade
-                                        ( "Fleet Hangar", fleetHangar.totalDisplayRegion.x + 20 )
+                                        ( "Fleet Hangar", fleetHangar.children.maincontainer.totalDisplayRegion)
                                         (useMenuEntryWithTextContaining "Warp to Member Within"
                                             (useMenuEntryWithTextContaining "Within 0 m" menuCascadeCompleted)
                                         )
