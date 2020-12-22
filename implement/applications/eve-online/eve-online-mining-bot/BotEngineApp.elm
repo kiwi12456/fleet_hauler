@@ -1472,16 +1472,16 @@ oreHoldFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
-oreHoldSizeFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe int
+oreHoldSizeFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 oreHoldSizeFromInventoryWindow =
     .leftTreeEntries
         >> List.concatMap (.children >> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild)
         >> List.filter (.text >> String.toLower >> String.contains "ore hold")
         >> List.head
         >> Maybe.map .selectedContainerCapacityGauge
-        >> Maybe.andThen Result.toMaybe
-        >> Maybe.andThen
-            (\capacity -> capacity.maximum |> Maybe.map (\maximum -> capacity.used * 100 // maximum))
+        -- >> Maybe.andThen Result.toMaybe
+        -- >> Maybe.andThen
+        --     (\capacity -> capacity.maximum |> Maybe.map (\maximum -> capacity.used * 100 // maximum))
 
 fleetHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 fleetHangarFromInventoryWindow =
