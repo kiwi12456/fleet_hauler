@@ -29,6 +29,7 @@ import EveOnline.AppFramework
         , SeeUndockingComplete
         , ShipModulesMemory
         , UIElement
+        , UIElementRegion
         , actWithoutFurtherReadings
         , askForHelpToGetUnstuck
         , branchDependingOnDockedOrInSpace
