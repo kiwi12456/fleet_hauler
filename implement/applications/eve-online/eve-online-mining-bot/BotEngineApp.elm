@@ -178,10 +178,16 @@ miningBotDecisionRoot context =
                             }
                             context
                             |> Maybe.withDefault
-                                (ensureFleetHangarIsSelectedInInventoryWindow
-                                    context
-                                    (inSpaceWithFleetHangarSelected context seeUndockingComplete)
-                                )
+                                if (inventoryWindowWithOreHoldSelectedFromGameClient |> inventoryWindowSelectedContainerIsOreHold) then
+                                    (ensureFleetHangarIsSelectedInInventoryWindow
+                                        context
+                                        (inSpaceWithFleetHangarSelected context seeUndockingComplete)
+                                    )
+                                else
+                                    (ensureFleetHangarIsSelectedInInventoryWindow
+                                        context
+                                        (inSpaceWithFleetHangarSelected context seeUndockingComplete)
+                                    )
                 }
                 context.readingFromGameClient
             )
