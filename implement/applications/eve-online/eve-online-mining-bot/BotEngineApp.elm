@@ -437,8 +437,8 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                             describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore from fleet hangar.")
                                 (case inventoryWindowWithOreHoldSelected |> fleetHangarFromInventoryWindow of
                                     Nothing ->                             
-                                        describeBranch "I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar."
-                                            case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
+                                        describeBranch ("I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar.")
+                                            (case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
                                                     Nothing ->
                                                         describeBranch "I see no fleet commander. Warp to fleet commander."
                                                             (warpToWatchlistEntry context)
@@ -452,6 +452,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                     context.readingFromGameClient
                                                                 )
                                                         )
+                                            )
 
                                     Just fleetHangar ->
                                         endDecisionPath
