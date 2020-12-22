@@ -512,7 +512,11 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                                 , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 , mouseButton = MouseButtonLeft
                                                                                 } ]
-                                                                                , oreHold |> clickOnUIElement MouseButtonLeft
+                                                                                , [EffectOnWindow.effectsMouseClickAtLocation 
+                                                                                { location = oreHold.totalDisplayRegion |> centerFromDisplayRegion
+                                                                                , mouseButton = MouseButtonLeft
+                                                                                }
+                                                                                ]
                                                                                 , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_W ]
                                                                                 ]
                                                                                     |> List.concat
