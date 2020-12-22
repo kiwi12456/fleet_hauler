@@ -549,10 +549,10 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                         )
 
                 else
-                    describeBranch ("The fleet hangar is not yet filled " ++ describeThresholdToUnload ++ ". Continue.")
+                    describeBranch ("The fleet hangar is not yet filled. Wait.")
                         (ensureFleetHangarIsSelectedInInventoryWindow
                             context
-                            (inSpaceWithOreHoldSelected context seeUndockingComplete)
+                            (inSpaceWithFleetHangarSelected context seeUndockingComplete)
                         )
 
 unlockTargetsNotForMining : BotDecisionContext -> Maybe DecisionPathNode
