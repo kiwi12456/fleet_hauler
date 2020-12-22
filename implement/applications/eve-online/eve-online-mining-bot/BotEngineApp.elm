@@ -316,9 +316,9 @@ closeHybridWindow readingFromGameClient =
                                 >> Maybe.map (String.trim >> String.toLower >> (\buttonText -> [ "close", "ok" ] |> List.member buttonText))
                                 >> Maybe.withDefault False
                      in
-                     case messageBox.buttons |> List.filter buttonCanBeUsedToClose |> List.head of
+                     case hybridWindow.buttons |> List.filter buttonCanBeUsedToClose |> List.head of
                         Nothing ->
-                            describeBranch "I see no way to close this message box." askForHelpToGetUnstuck
+                            describeBranch "I see no way to close this hybrid window." askForHelpToGetUnstuck
 
                         Just buttonToUse ->
                             endDecisionPath
