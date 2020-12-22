@@ -507,7 +507,11 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                     (endDecisionPath
                                                                         (actWithoutFurtherReadings
                                                                             ( "Press the 'W' key and click on the overview entry."
-                                                                            , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_W ]
+                                                                            , [ [ EffectOnWindow.effectsForDragAndDrop
+                                                                                { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                                                                , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
+                                                                                , mouseButton = MouseButtonLeft
+                                                                                } ]
                                                                                 , oreHold |> clickOnUIElement MouseButtonLeft
                                                                                 , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_W ]
                                                                                 ]
