@@ -449,20 +449,20 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                         (5 |> String.fromInt) ++ "%"
                 in
                 if 5 <= fillPercent then
-                    case oreHoldSizeFromInventoryWindow of
-                        Nothing ->
-                            describeBranch "I do not see the ore hold in the inventory." askForHelpToGetUnstuck
-                        Just oreholdPercent ->
-                            let
-                                describeOreThresholdToUnload =
-                                    (context.eventContext.appSettings.oreHoldMaxPercent |> String.fromInt) ++ "%"
-                            in
-                            if context.eventContext.appSettings.oreHoldMaxPercent <= oreholdPercent then
-                                describeBranch ("The ore hold is filled at least " ++ describeOreThresholdToUnload ++ ". Unload the ore.")
-                                    (returnDronesToBay context.readingFromGameClient
-                                        |> Maybe.withDefault (dockToUnloadOre context)
-                                    )
-                            else
+                    -- case oreHoldSizeFromInventoryWindow of
+                    --     Nothing ->
+                    --         describeBranch "I do not see the ore hold in the inventory." askForHelpToGetUnstuck
+                    --     Just oreholdPercent ->
+                    --         let
+                    --             describeOreThresholdToUnload =
+                    --                 (context.eventContext.appSettings.oreHoldMaxPercent |> String.fromInt) ++ "%"
+                    --         in
+                    --         if context.eventContext.appSettings.oreHoldMaxPercent <= oreholdPercent then
+                    --             describeBranch ("The ore hold is filled at least " ++ describeOreThresholdToUnload ++ ". Unload the ore.")
+                    --                 (returnDronesToBay context.readingFromGameClient
+                    --                     |> Maybe.withDefault (dockToUnloadOre context)
+                    --                 )
+                    --         else
                                 describeBranch ("The ore hold is not yet filled at " ++ describeOreThresholdToUnload ++ ". The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
                                     (case inventoryWindowWithFleetHangarSelected |> fleetHangarFromInventoryWindow of
                                         Nothing ->
