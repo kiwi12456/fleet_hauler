@@ -1472,7 +1472,7 @@ oreHoldFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
-oreHoldSizeFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe Int
+oreHoldSizeFromInventoryWindow : ReadingFromGameClient -> Maybe Int
 oreHoldSizeFromInventoryWindow =
     inventoryWindowWithOreHoldSelectedFromGameClient
         >> Maybe.andThen .selectedContainerCapacityGauge
