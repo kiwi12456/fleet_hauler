@@ -506,20 +506,12 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                 |> Maybe.withDefault
                                                                     (endDecisionPath
                                                                         (actWithoutFurtherReadings
-                                                                            ( "Press the 'W' key and click on the overview entry."
-                                                                            , [ [ EffectOnWindow.effectsForDragAndDrop
+                                                                            ( "Drag and drop."
+                                                                            , EffectOnWindow.effectsForDragAndDrop
                                                                                 { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 , mouseButton = MouseButtonLeft
-                                                                                } ]
-                                                                                , [EffectOnWindow.effectsMouseClickAtLocation 
-                                                                                { mouseButton = MouseButtonLeft
-                                                                                , location = oreHold.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 }
-                                                                                ]
-                                                                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_W ]
-                                                                                ]
-                                                                                    |> List.concat
                                                                             )
                                                                         )
                                                                     )
