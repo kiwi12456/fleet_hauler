@@ -507,7 +507,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                             ( "Drag and drop."
                                                                             , EffectOnWindow.effectsForDragAndDrop
                                                                                 { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                                                                , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
+                                                                                , endLocation = oreHold.uiNode.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 , mouseButton = MouseButtonLeft
                                                                                 }
                                                                             )
@@ -1455,7 +1455,7 @@ oreHoldFromInventoryWindow =
         >> List.concatMap (.children >> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild)
         >> List.filter (.text >> String.toLower >> String.contains "ore hold")
         >> List.head
-        >> Maybe.map .uiNode
+        -- >> Maybe.map .uiNode
 
 fleetHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 fleetHangarFromInventoryWindow =
