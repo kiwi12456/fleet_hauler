@@ -455,13 +455,19 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                 describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
 
                             Just fleetHangar ->
-                                EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonLeft
-                                { x = fleetHangar.totalDisplayRegion.x + 1
-                                , y = fleetHangar.totalDisplayRegion.y - 1
-                                }
-                                ++ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
-                                   , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
-                                   ]
+                                (endDecisionPath
+                                    (actWithoutFurtherReadings
+                                        ( "Click at scroll control bottom"
+                                        , EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonRight
+                                            { x = fleetHangar.totalDisplayRegion.x + 1
+                                            , y = fleetHangar.totalDisplayRegion.y - 1
+                                            }
+                                            ++ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
+                                            , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
+                                            ]
+                                        )
+                                    )
+                                )
                                 
                         )
 
