@@ -455,14 +455,40 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                 describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
 
                             Just fleetHangar ->
-                                describeBranch "Select all ores in the fleet hangar."
-                                    (useContextMenuCascade
-                                        ( "Fleet Hangar", fleetHangar)
-                                        (useMenuEntryWithTextContaining "Warp to Member Within"
-                                            (useMenuEntryWithTextContaining "Within 0 m" menuCascadeCompleted)
-                                        )
-                                        context.readingFromGameClient
-                                    )
+                                case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
+                                    Nothing ->
+                                        describeBranch "I see no item in the ore hold. Check if we should undock."
+                                            (continueIfShouldHide
+                                                { ifShouldHide =
+                                                    describeBranch "Stay docked." waitForProgressInGame
+                                                }
+                                                context
+                                                |> Maybe.withDefault (undockUsingStationWindow context)
+                                            )
+
+                                    Just itemInInventory ->
+                                        describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
+                                            (endDecisionPath
+                                                (actWithoutFurtherReadings
+                                                    ( "Drag and drop."
+                                                    , EffectOnWindow.effectsForDragAndDrop
+                                                        { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                                        , endLocation = fleetHangar.totalDisplayRegion |> centerFromDisplayRegion
+                                                        , mouseButton = MouseButtonLeft
+                                                        }
+                                                    )
+                                                )
+                                            )
+
+
+                                -- describeBranch "Select all ores in the fleet hangar."
+                                --     (useContextMenuCascade
+                                --         ( "Fleet Hangar", fleetHangar)
+                                --         (useMenuEntryWithTextContaining "Warp to Member Within"
+                                --             (useMenuEntryWithTextContaining "Within 0 m" menuCascadeCompleted)
+                                --         )
+                                --         context.readingFromGameClient
+                                --     )
                                 -- (endDecisionPath
                                 --     (actWithoutFurtherReadings
                                 --         ( "Click at scroll control bottom"
