@@ -434,11 +434,25 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                 )
 
                         else
-                            describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore.")
-                                (ensureOreHoldIsSelectedInInventoryWindow
-                                    context
-                                    (inSpaceWithFleetHangarSelected context seeUndockingComplete)
+                            describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore from fleet hangar.")
+                                (case inventoryWindowWithOreHoldSelected |> fleetHangarFromInventoryWindow of
+                                    Nothing ->
+                                        describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
+
+                                    Just fleetHangar ->
+                                        endDecisionPath
+                                            (actWithoutFurtherReadings
+                                                ( "Click the tree entry representing the fleet hangar."
+                                                , fleetHangar.uiNode |> clickOnUIElement MouseButtonLeft
+                                                )
+                                            )
+
                                 )
+                                
+                                -- (ensureOreHoldIsSelectedInInventoryWindow
+                                --     context
+                                --     (inSpaceWithFleetHangarSelected context seeUndockingComplete)
+                                -- )
 
 inSpaceWithFleetHangarSelected : BotDecisionContext -> SeeUndockingComplete -> EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode
 inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithFleetHangarSelected =
