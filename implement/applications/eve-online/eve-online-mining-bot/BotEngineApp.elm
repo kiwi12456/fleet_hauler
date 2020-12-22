@@ -268,7 +268,7 @@ returnDronesAndRunAwayIfHitpointsAreTooLow context shipUI =
 
 generalSetupInUserInterface : ReadingFromGameClient -> Maybe DecisionPathNode
 generalSetupInUserInterface readingFromGameClient =
-    [ closeHybridWindow, ensureInfoPanelLocationInfoIsExpanded ]
+    [ closeMessageBox, closeHybridWindow, ensureInfoPanelLocationInfoIsExpanded ]
         |> List.filterMap
             (\maybeSetupDecisionFromGameReading ->
                 maybeSetupDecisionFromGameReading readingFromGameClient
@@ -324,7 +324,12 @@ closeHybridWindow readingFromGameClient =
                             endDecisionPath
                                 (actWithoutFurtherReadings
                                     ( "Click on button '" ++ (buttonToUse.mainText |> Maybe.withDefault "") ++ "'."
-                                    , buttonToUse.uiNode |> clickOnUIElement MouseButtonLeft
+                                    , buttonToUse.uiNode 
+                                        |> clickOnUIElement MouseButtonLeft
+                                            |> (ensureOreHoldIsSelectedInInventoryWindow
+                                                    context
+                                                    (inSpaceWithOreHoldSelected context seeUndockingComplete)
+                                                )
                                     )
                                 )
                     )
