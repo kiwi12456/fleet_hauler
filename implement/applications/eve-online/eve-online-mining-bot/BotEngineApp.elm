@@ -632,6 +632,28 @@ warpToOverviewEntryIfFarEnough context destinationOverviewEntry =
             Just (describeBranch ("Failed to read the distance: " ++ error) askForHelpToGetUnstuck)
 
 
+approachFleetCommanderIfFarEnough : BotDecisionContext -> OverviewWindowEntry -> Maybe DecisionPathNode
+approachFleetCommanderIfFarEnough context fleetCommanderOverviewEntry =
+    case fleetCommanderOverviewEntry.objectDistanceInMeters of
+        Ok distanceInMeters ->
+            if distanceInMeters <= 2000 then
+                Nothing
+
+            else
+                Just
+                    (describeBranch "Far enough to start approaching fleet commander."
+                        (useContextMenuCascadeOnOverviewEntry
+                            (useMenuEntryWithTextContaining "Orbit" 
+                                (useMenuEntryWithTextContaining "500 m" menuCascadeCompleted)
+                            )
+                            fleetCommanderOverviewEntry
+                            context.readingFromGameClient
+                        )
+                    )
+
+        Err error ->
+            Just (describeBranch ("Failed to read the distance: " ++ error) askForHelpToGetUnstuck)
+
 ensureOreHoldIsSelectedInInventoryWindow : ReadingFromGameClient -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
 ensureOreHoldIsSelectedInInventoryWindow readingFromGameClient continueWithInventoryWindow =
     case readingFromGameClient |> inventoryWindowWithOreHoldSelectedFromGameClient of
@@ -698,45 +720,46 @@ ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient continueWithI
                     describeBranch "I do not see an inventory window. Please open an inventory window." askForHelpToGetUnstuck
 
                 Just inventoryWindow ->
-                    describeBranch
-                        "Fleet hangar is not selected. Select the fleet hangar."
-                        (case inventoryWindow |> activeShipTreeEntryFromInventoryWindow of
-                            Nothing ->
-                                describeBranch "I do not see the active ship in the inventory." askForHelpToGetUnstuck
+                    case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
+                        Nothing ->
+                            describeBranch "I see no fleet commander. Warp to fleet commander."
+                                (warpToWatchlistEntry context)
 
-                            Just activeShipTreeEntry ->
-                                let
-                                    maybeFleetHangarTreeEntry =
-                                        activeShipTreeEntry.children
-                                            |> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild
-                                            |> List.filter (.text >> String.toLower >> String.contains "fleet hangar")
-                                            |> List.head
-                                in
-                                case maybeFleetHangarTreeEntry of
+                        Just fleetCommanderInOverview ->
+                            describeBranch
+                                "Fleet hangar is not selected. Select the fleet hangar."
+                                (case inventoryWindow |> activeShipTreeEntryFromInventoryWindow of
                                     Nothing ->
-                                        describeBranch "I do not see the fleet hangar under the active ship in the inventory."
-                                            (case activeShipTreeEntry.toggleBtn of
-                                                Nothing ->
-                                                    describeBranch "I do not see the toggle button to expand the active ship tree entry."
-                                                        askForHelpToGetUnstuck
+                                        describeBranch "I do not see the active ship in the inventory." askForHelpToGetUnstuck
 
-                                                Just toggleBtn ->
-                                                    endDecisionPath
-                                                        (actWithoutFurtherReadings
-                                                            ( "Click the toggle button to expand."
-                                                            , toggleBtn |> clickOnUIElement MouseButtonLeft
+                                    Just activeShipTreeEntry ->
+                                        let
+                                            maybeFleetHangarTreeEntry =
+                                                activeShipTreeEntry.children
+                                                    |> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild
+                                                    |> List.filter (.text >> String.toLower >> String.contains "fleet hangar")
+                                                    |> List.head
+                                        in
+                                        case maybeFleetHangarTreeEntry of
+                                            Nothing ->
+                                                describeBranch "I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar."
+                                                    (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                                                        |> Maybe.withDefault
+                                                            (useContextMenuCascadeOnOverviewEntry
+                                                                (useMenuEntryWithTextContaining "Open Fleet Hangar" menuCascadeCompleted)
+                                                                fleetCommanderInOverview
+                                                                context.readingFromGameClient
                                                             )
-                                                        )
-                                            )
+                                                    )
 
-                                    Just fleetHangarTreeEntry ->
-                                        endDecisionPath
-                                            (actWithoutFurtherReadings
-                                                ( "Click the tree entry representing the fleet hangar."
-                                                , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
-                                                )
-                                            )
-                        )
+                                            Just fleetHangarTreeEntry ->
+                                                endDecisionPath
+                                                    (actWithoutFurtherReadings
+                                                        ( "Click the tree entry representing the fleet hangar."
+                                                        , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                        )
+                                                    )
+                                )
 
 
 lockTargetFromOverviewEntryAndEnsureIsInRange : ReadingFromGameClient -> Int -> OverviewWindowEntry -> DecisionPathNode
@@ -896,6 +919,22 @@ dockToStationOrStructureUsingSurroundingsButtonMenu { prioritizeStructures, desc
             )
         )
 
+warpToWatchlistEntry : BotDecisionContext -> DecisionPathNode
+warpToWatchlistEntry context =
+    case context.readingFromGameClient.watchListPanel |> Maybe.andThen (.entries >> List.head) of
+        Just watchlistEntry ->
+            describeBranch "Warp to entry in watchlist panel."
+                (useContextMenuCascade
+                    ( "Watchlist entry", watchlistEntry )
+                    (useMenuEntryWithTextContaining "Warp to Member Within"
+                        (useMenuEntryWithTextContaining "Within 0 m" menuCascadeCompleted)
+                    )
+                    context.readingFromGameClient
+                )
+
+        Nothing ->
+            describeBranch "I see no entry in the watchlist panel. Warping directly to mining site."
+                (warpToMiningSite context.readingFromGameClient)
 
 warpToMiningSite : ReadingFromGameClient -> DecisionPathNode
 warpToMiningSite readingFromGameClient =
@@ -1311,6 +1350,24 @@ overviewWindowEntryRepresentsAnAsteroid entry =
     (entry.textsLeftToRight |> List.any (String.toLower >> String.contains "asteroid"))
         && (entry.textsLeftToRight |> List.any (String.toLower >> String.contains "belt") |> not)
 
+fleetCommanderFromOverviewWindow : ReadingFromGameClient -> Maybe OverviewWindowEntry
+fleetCommanderFromOverviewWindow =
+    overviewWindowEntriesRepresentingFleetCommander
+        >> List.filter overviewWindowEntryRepresentsFleetCommander
+        >> List.sortBy (.uiNode >> .totalDisplayRegion >> .y)
+        >> List.head
+
+
+overviewWindowEntriesRepresentingFleetCommander : ReadingFromGameClient -> List OverviewWindowEntry
+overviewWindowEntriesRepresentingFleetCommander =
+    .overviewWindow
+        >> Maybe.map (.entries >> List.filter overviewWindowEntryRepresentsFleetCommander)
+        >> Maybe.withDefault []
+
+
+overviewWindowEntryRepresentsFleetCommander : OverviewWindowEntry -> Bool
+overviewWindowEntryRepresentsFleetCommander entry =
+    (entry.textsLeftToRight |> List.any (String.toLower >> String.contains "tris"))
 
 capacityGaugeUsedPercent : EveOnline.ParseUserInterface.InventoryWindow -> Maybe Int
 capacityGaugeUsedPercent =
