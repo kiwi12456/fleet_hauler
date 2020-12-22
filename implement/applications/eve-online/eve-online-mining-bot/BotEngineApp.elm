@@ -553,11 +553,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                         (endDecisionPath
                             (actWithoutFurtherReadings
                                 ( "Click at scroll control bottom"
-                                , EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonRight
-                                    { x = inventoryWindowWithFleetHangarSelected.totalDisplayRegion.x + 20
-                                    , y = inventoryWindowWithFleetHangarSelected.totalDisplayRegion.y - 1
-                                    }
-                                    ++ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
+                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
                                     , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
                                     ]
                                 )
