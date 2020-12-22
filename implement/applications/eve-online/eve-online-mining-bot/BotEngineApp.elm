@@ -767,12 +767,21 @@ ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow
                                                     )
 
                                             Just fleetHangarTreeEntry ->
-                                                endDecisionPath
-                                                    (actWithoutFurtherReadings
-                                                        ( "Click the tree entry representing the fleet hangar."
-                                                        , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                                                            |> Maybe.withDefault
+                                                                endDecisionPath
+                                                                    (actWithoutFurtherReadings
+                                                                        ( "Click the tree entry representing the fleet hangar."
+                                                                        , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                                        )
+                                                                    )
                                                         )
-                                                    )
+                                                -- endDecisionPath
+                                                --     (actWithoutFurtherReadings
+                                                --         ( "Click the tree entry representing the fleet hangar."
+                                                --         , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                --         )
+                                                --     )
                                 )
 
 
