@@ -508,7 +508,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                         (actWithoutFurtherReadings
                                                                             ( "Press the 'W' key and click on the overview entry."
                                                                             , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_W ]
-                                                                                , oreHold.uiNode |> clickOnUIElement MouseButtonLeft
+                                                                                , oreHold |> clickOnUIElement MouseButtonLeft
                                                                                 , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_W ]
                                                                                 ]
                                                                                     |> List.concat
