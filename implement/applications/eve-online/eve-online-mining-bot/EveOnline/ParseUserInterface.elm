@@ -35,6 +35,7 @@ type alias ParsedUserInterface =
     , moduleButtonTooltip : Maybe ModuleButtonTooltip
     , neocom : Maybe Neocom
     , messageBoxes : List MessageBox
+    , hybridWindows : List HybridWindow
     , layerAbovemain : Maybe UITreeNodeWithDisplayRegion
     }
 
@@ -465,6 +466,10 @@ type alias MessageBox =
     , buttons : List { uiNode : UITreeNodeWithDisplayRegion, mainText : Maybe String }
     }
 
+type alias HybridWindow =
+    { uiNode : UITreeNodeWithDisplayRegion
+    , buttons : List { uiNode : UITreeNodeWithDisplayRegion, mainText : Maybe String }
+    }
 
 type alias ScrollControls =
     { uiNode : UITreeNodeWithDisplayRegion
@@ -524,6 +529,7 @@ parseUserInterfaceFromUITree uiTree =
     , watchListPanel = parseWatchListPanelFromUITreeRoot uiTree
     , neocom = parseNeocomFromUITreeRoot uiTree
     , messageBoxes = parseMessageBoxesFromUITreeRoot uiTree
+    , hybridWindows = parseHybridWindowsFromUITreeRoot uiTree
     , layerAbovemain = parseLayerAbovemainFromUITreeRoot uiTree
     }
 
@@ -2415,6 +2421,35 @@ parseMessageBox uiNode =
     , uiNode = uiNode
     }
 
+parseHybridWindowsFromUITreeRoot : UITreeNodeWithDisplayRegion -> List HybridWindow
+parseHybridWindowsFromUITreeRoot uiTreeRoot =
+    uiTreeRoot
+        |> listDescendantsWithDisplayRegion
+        |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "HybridWindow")
+        |> List.map parseHybridWindow
+
+parseHybridWindow : UITreeNodeWithDisplayRegion -> HybridWindow
+parseHybridWindow uiNode =
+    let
+        buttons =
+            uiNode
+                |> listDescendantsWithDisplayRegion
+                |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "Button")
+                |> List.map
+                    (\buttonNode ->
+                        { uiNode = buttonNode
+                        , mainText =
+                            buttonNode
+                                |> getAllContainedDisplayTextsWithRegion
+                                |> List.sortBy (Tuple.second >> .totalDisplayRegion >> areaFromDisplayRegion >> Maybe.withDefault 0)
+                                |> List.map Tuple.first
+                                |> List.head
+                        }
+                    )
+    in
+    { buttons = buttons
+    , uiNode = uiNode
+    }
 
 parseScrollControls : UITreeNodeWithDisplayRegion -> ScrollControls
 parseScrollControls scrollControlsNode =

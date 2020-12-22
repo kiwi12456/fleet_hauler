@@ -268,7 +268,7 @@ returnDronesAndRunAwayIfHitpointsAreTooLow context shipUI =
 
 generalSetupInUserInterface : ReadingFromGameClient -> Maybe DecisionPathNode
 generalSetupInUserInterface readingFromGameClient =
-    [ closeMessageBox, ensureInfoPanelLocationInfoIsExpanded ]
+    [ closeMessageBox, closeHybridWindow, ensureInfoPanelLocationInfoIsExpanded ]
         |> List.filterMap
             (\maybeSetupDecisionFromGameReading ->
                 maybeSetupDecisionFromGameReading readingFromGameClient
@@ -303,6 +303,32 @@ closeMessageBox readingFromGameClient =
                     )
             )
 
+closeHybridWindow : ReadingFromGameClient -> Maybe DecisionPathNode
+closeHybridWindow readingFromGameClient =
+    readingFromGameClient.hybridWindows
+        |> List.head
+        |> Maybe.map
+            (\hybridWindow ->
+                describeBranch "I see a hybrid window to close."
+                    (let
+                        buttonCanBeUsedToClose =
+                            .mainText
+                                >> Maybe.map (String.trim >> String.toLower >> (\buttonText -> [ "close", "ok" ] |> List.member buttonText))
+                                >> Maybe.withDefault False
+                     in
+                     case messageBox.buttons |> List.filter buttonCanBeUsedToClose |> List.head of
+                        Nothing ->
+                            describeBranch "I see no way to close this message box." askForHelpToGetUnstuck
+
+                        Just buttonToUse ->
+                            endDecisionPath
+                                (actWithoutFurtherReadings
+                                    ( "Click on button '" ++ (buttonToUse.mainText |> Maybe.withDefault "") ++ "'."
+                                    , buttonToUse.uiNode |> clickOnUIElement MouseButtonLeft
+                                    )
+                                )
+                    )
+            )
 
 dockedWithOreHoldSelected : BotDecisionContext -> EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode
 dockedWithOreHoldSelected context inventoryWindowWithOreHoldSelected =
