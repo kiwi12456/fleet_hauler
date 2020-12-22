@@ -489,7 +489,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
 
                                     Just itemInInventory ->
                                         describeBranch "I see at least one item in the ore hold. Move this to the ore hold."
-                                            case inventoryWindowWithOreHoldSelected |> oreHoldFromInventoryWindow of
+                                            case inventoryWindowWithFleetHangarSelected |> oreHoldFromInventoryWindow of
                                                 Nothing ->
                                                     describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
 
