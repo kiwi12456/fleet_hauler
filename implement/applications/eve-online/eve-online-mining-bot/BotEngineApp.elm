@@ -398,7 +398,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
 
                         else
                             describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore.")
-                                (ensureFleetHangarIsSelectedInInventoryWindow
+                                (ensureOreHoldIsSelectedInInventoryWindow
                                     context
                                     (inSpaceWithFleetHangarSelected context seeUndockingComplete)
                                 )
