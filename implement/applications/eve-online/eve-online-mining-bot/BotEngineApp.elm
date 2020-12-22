@@ -443,7 +443,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                         endDecisionPath
                                             (actWithoutFurtherReadings
                                                 ( "Click the tree entry representing the fleet hangar."
-                                                , fleetHangar.uiNode |> clickOnUIElement MouseButtonLeft
+                                                , fleetHangar |> clickOnUIElement MouseButtonLeft
                                                 )
                                             )
 
