@@ -767,20 +767,12 @@ ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow
                                                     )
 
                                             Just fleetHangarTreeEntry ->
-                                                (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
-                                                    |> endDecisionPath
-                                                            (actWithoutFurtherReadings
-                                                                ( "Click the tree entry representing the fleet hangar."
-                                                                , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
-                                                                )
-                                                            )
-                                                )
-                                                -- endDecisionPath
-                                                --     (actWithoutFurtherReadings
-                                                --         ( "Click the tree entry representing the fleet hangar."
-                                                --         , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
-                                                --         )
-                                                --     )
+                                                endDecisionPath
+                                                    (actWithoutFurtherReadings
+                                                        ( "Click the tree entry representing the fleet hangar."
+                                                        , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                        )
+                                                    )
                                 )
 
 
