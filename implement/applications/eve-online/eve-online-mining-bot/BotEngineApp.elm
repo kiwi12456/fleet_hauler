@@ -489,17 +489,22 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
 
                                     Just itemInInventory ->
                                         describeBranch "I see at least one item in the ore hold. Move this to the ore hold."
-                                            (endDecisionPath
-                                                (actWithoutFurtherReadings
-                                                    ( "Drag and drop."
-                                                    , EffectOnWindow.effectsForDragAndDrop
-                                                        { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                                        , endLocation = fleetHangar.totalDisplayRegion |> centerFromDisplayRegion
-                                                        , mouseButton = MouseButtonLeft
-                                                        }
+                                            case inventoryWindowWithOreHoldSelected |> oreHoldFromInventoryWindow of
+                                                Nothing ->
+                                                    describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
+
+                                                Just oreHold ->
+                                                    (endDecisionPath
+                                                        (actWithoutFurtherReadings
+                                                            ( "Drag and drop."
+                                                            , EffectOnWindow.effectsForDragAndDrop
+                                                                { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                                                , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
+                                                                , mouseButton = MouseButtonLeft
+                                                                }
+                                                            )
+                                                        )
                                                     )
-                                                )
-                                            )
 
 
                                 -- describeBranch "Select all ores in the fleet hangar."
