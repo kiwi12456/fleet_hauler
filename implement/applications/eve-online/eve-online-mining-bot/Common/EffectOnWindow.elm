@@ -44,6 +44,7 @@ effectsForDragAndDrop { startLocation, mouseButton, endLocation } =
     , MouseMoveTo endLocation
     , KeyUp (virtualKeyCodeFromMouseButton mouseButton)
     , KeyDown (virtualKeyCodeFromMouseButton mouseButton)
+    , KeyUp (virtualKeyCodeFromMouseButton mouseButton)
     ]
 
 
