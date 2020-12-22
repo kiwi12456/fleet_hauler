@@ -178,9 +178,9 @@ miningBotDecisionRoot context =
                             }
                             context
                             |> Maybe.withDefault
-                                (ensureFleetHangarIsSelectedInInventoryWindow
+                                (ensureOreHoldIsSelectedInInventoryWindow
                                     context.readingFromGameClient
-                                    (inSpaceWithFleetHangarSelected context seeUndockingComplete)
+                                    (inSpaceWithOreHoldSelected context seeUndockingComplete)
                                 )
                 }
                 context.readingFromGameClient
@@ -438,59 +438,39 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                 |> List.head
                 |> Maybe.withDefault waitForProgressInGame
             )
-
     else
-        case context |> knownModulesToActivateAlways |> List.filter (Tuple.second >> .isActive >> Maybe.withDefault False >> not) |> List.head of
-            Just ( inactiveModuleMatchingText, inactiveModule ) ->
-                describeBranch ("I see inactive module '" ++ inactiveModuleMatchingText ++ "' to activate always. Activate it.")
-                    (clickModuleButtonButWaitIfClickedInPreviousStep context inactiveModule)
-
+        case inventoryWindowWithFleetHangarSelected |> capacityGaugeUsedPercent of
             Nothing ->
-                case inventoryWindowWithFleetHangarSelected |> capacityGaugeUsedPercent of
-                    Nothing ->
-                        describeBranch "I do not see the fleet hangar capacity gauge." askForHelpToGetUnstuck
+                describeBranch "I do not see the fleet hangar capacity gauge." askForHelpToGetUnstuck
 
-                    Just fillPercent ->
-                        let
-                            describeThresholdToUnload =
-                                (10 |> String.fromInt) ++ "%"
-                        in
-                        if 10 <= fillPercent then
-                            describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Unload the ore.")
-                                (returnDronesToBay context.readingFromGameClient
-                                    |> Maybe.withDefault (dockToUnloadOre context)
-                                )
+            Just fillPercent ->
+                let
+                    describeThresholdToUnload =
+                        (10 |> String.fromInt) ++ "%"
+                in
+                if 10 <= fillPercent then
+                    describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
+                        (case inventoryWindowWithFleetHangarSelected |> fleetHangarFromInventoryWindow of
+                            Nothing ->
+                                describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
 
-                        else
-                            describeBranch ("The fleet hangar is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore.")
-                                (case context.readingFromGameClient.targets |> List.head of
-                                    Nothing ->
-                                        describeBranch "I see no locked target."
-                                            (travelToMiningSiteAndLaunchDronesAndTargetAsteroid context)
+                            Just fleetHangar ->
+                                EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonLeft
+                                { x = fleetHangar.totalDisplayRegion.x + 1
+                                , y = fleetHangar.totalDisplayRegion.y - 1
+                                }
+                                ++ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
+                                   , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
+                                   ]
+                                
+                        )
 
-                                    Just _ ->
-                                        {- Depending on the UI configuration, the game client might automatically target rats.
-                                           To avoid these targets interfering with mining, unlock them here.
-                                        -}
-                                        unlockTargetsNotForMining context
-                                            |> Maybe.withDefault
-                                                (describeBranch "I see a locked target."
-                                                    (case context |> knownMiningModules |> List.filter (.isActive >> Maybe.withDefault False >> not) |> List.head of
-                                                        Nothing ->
-                                                            describeBranch "All known mining modules are active."
-                                                                (readShipUIModuleButtonTooltips context
-                                                                    |> Maybe.withDefault
-                                                                        (launchDronesAndSendThemToMine context.readingFromGameClient
-                                                                            |> Maybe.withDefault waitForProgressInGame
-                                                                        )
-                                                                )
-
-                                                        Just inactiveModule ->
-                                                            describeBranch "I see an inactive mining module. Activate it."
-                                                                (clickModuleButtonButWaitIfClickedInPreviousStep context inactiveModule)
-                                                    )
-                                                )
-                                )
+                else
+                    describeBranch ("The fleet hangar is not yet filled " ++ describeThresholdToUnload ++ ". Continue.")
+                        (ensureFleetHangarIsSelectedInInventoryWindow
+                            context.readingFromGameClient
+                            (inSpaceWithOreHoldSelected context seeUndockingComplete)
+                        )
 
 unlockTargetsNotForMining : BotDecisionContext -> Maybe DecisionPathNode
 unlockTargetsNotForMining context =
@@ -626,7 +606,8 @@ ensureFleetHangarIsSelectedInInventoryWindow : ReadingFromGameClient -> (EveOnli
 ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient continueWithInventoryWindow =
     case readingFromGameClient |> inventoryWindowWithFleetHangarSelectedFromGameClient of
         Just inventoryWindow ->
-            continueWithInventoryWindow inventoryWindow
+            describeBranch "Fleet hangar found"
+                (continueWithInventoryWindow inventoryWindow)
 
         Nothing ->
             case readingFromGameClient.inventoryWindows |> List.head of
@@ -673,6 +654,7 @@ ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient continueWithI
                                                 )
                                             )
                         )
+
 
 lockTargetFromOverviewEntryAndEnsureIsInRange : ReadingFromGameClient -> Int -> OverviewWindowEntry -> DecisionPathNode
 lockTargetFromOverviewEntryAndEnsureIsInRange readingFromGameClient rangeInMeters overviewEntry =
@@ -1261,7 +1243,6 @@ inventoryWindowWithOreHoldSelectedFromGameClient =
         >> List.filter inventoryWindowSelectedContainerIsOreHold
         >> List.head
 
-
 inventoryWindowWithFleetHangarSelectedFromGameClient : ReadingFromGameClient -> Maybe EveOnline.ParseUserInterface.InventoryWindow
 inventoryWindowWithFleetHangarSelectedFromGameClient =
     .inventoryWindows
@@ -1299,6 +1280,21 @@ itemHangarFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
+oreHoldFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
+oreHoldFromInventoryWindow =
+    .leftTreeEntries
+        >> List.concatMap (.children >> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild)
+        >> List.filter (.text >> String.toLower >> String.contains "ore hold")
+        >> List.head
+        >> Maybe.map .uiNode
+
+fleetHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
+fleetHangarFromInventoryWindow =
+    .leftTreeEntries
+        >> List.concatMap (.children >> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild)
+        >> List.filter (.text >> String.toLower >> String.contains "fleet hangar")
+        >> List.head
+        >> Maybe.map .uiNode
 
 {-| The region of a ship entry in the inventory window can contain child nodes (e.g. 'Ore Hold').
 For this reason, we don't click on the center but stay close to the top.
