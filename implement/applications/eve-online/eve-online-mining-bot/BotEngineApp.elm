@@ -436,9 +436,22 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                         else
                             describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore from fleet hangar.")
                                 (case inventoryWindowWithOreHoldSelected |> fleetHangarFromInventoryWindow of
-                                    Nothing ->
-                                        describeBranch ("I do not see the fleet hangar in the inventory. Warp to fleet commander.")
-                                            (warpToWatchlistEntry context)
+                                    Nothing ->                             
+                                        describeBranch "I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar."
+                                            case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
+                                                    Nothing ->
+                                                        describeBranch "I see no fleet commander. Warp to fleet commander."
+                                                            (warpToWatchlistEntry context)
+
+                                                    Just fleetCommanderInOverview ->
+                                                        (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                                                            |> Maybe.withDefault
+                                                                (useContextMenuCascadeOnOverviewEntry
+                                                                    (useMenuEntryWithTextContaining "Open Fleet Hangar" menuCascadeCompleted)
+                                                                    fleetCommanderInOverview
+                                                                    context.readingFromGameClient
+                                                                )
+                                                        )
 
                                     Just fleetHangar ->
                                         endDecisionPath
