@@ -165,7 +165,7 @@ miningBotDecisionRoot context =
             (branchDependingOnDockedOrInSpace
                 { ifDocked =
                     ensureOreHoldIsSelectedInInventoryWindow
-                        context.readingFromGameClient
+                        context
                         (dockedWithOreHoldSelected context)
                 , ifSeeShipUI =
                     returnDronesAndRunAwayIfHitpointsAreTooLow context
