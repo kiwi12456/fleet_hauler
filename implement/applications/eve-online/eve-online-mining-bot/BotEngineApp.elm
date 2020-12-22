@@ -179,6 +179,7 @@ miningBotDecisionRoot context =
                             context
                             |> Maybe.withDefault
                                 (ensureFleetHangarIsSelectedInInventoryWindow
+                                    context.readingFromGameClient
                                     context
                                     (inSpaceWithFleetHangarSelected context seeUndockingComplete)
                                 )
@@ -707,20 +708,20 @@ ensureOreHoldIsSelectedInInventoryWindow readingFromGameClient continueWithInven
                         )
 
 
-ensureFleetHangarIsSelectedInInventoryWindow : context -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
-ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow =
-    case context.readingFromGameClient |> inventoryWindowWithFleetHangarSelectedFromGameClient of
+ensureFleetHangarIsSelectedInInventoryWindow : ReadingFromGameClient -> context -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
+ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient context continueWithInventoryWindow =
+    case readingFromGameClient |> inventoryWindowWithFleetHangarSelectedFromGameClient of
         Just inventoryWindow ->
             describeBranch "Fleet hangar found"
                 (continueWithInventoryWindow inventoryWindow)
 
         Nothing ->
-            case context.readingFromGameClient.inventoryWindows |> List.head of
+            case readingFromGameClient.inventoryWindows |> List.head of
                 Nothing ->
                     describeBranch "I do not see an inventory window. Please open an inventory window." askForHelpToGetUnstuck
 
                 Just inventoryWindow ->
-                    case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
+                    case readingFromGameClient |> fleetCommanderFromOverviewWindow of
                         Nothing ->
                             describeBranch "I see no fleet commander. Warp to fleet commander."
                                 (warpToWatchlistEntry context)
