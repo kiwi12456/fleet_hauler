@@ -446,9 +446,9 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
             Just fillPercent ->
                 let
                     describeThresholdToUnload =
-                        (10 |> String.fromInt) ++ "%"
+                        (5 |> String.fromInt) ++ "%"
                 in
-                if 10 <= fillPercent then
+                if 5 <= fillPercent then
                     describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
                         (case inventoryWindowWithFleetHangarSelected |> fleetHangarFromInventoryWindow of
                             Nothing ->
