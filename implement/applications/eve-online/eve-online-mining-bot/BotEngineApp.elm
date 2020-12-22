@@ -1310,7 +1310,6 @@ fleetHangarFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
         >> Maybe.andThen .children
-        >> Maybe.map (List.map (EveOnline.MemoryReading.unwrapUITreeNodeChild))
 
 {-| The region of a ship entry in the inventory window can contain child nodes (e.g. 'Ore Hold').
 For this reason, we don't click on the center but stay close to the top.
