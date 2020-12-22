@@ -398,7 +398,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
 
                         else
                             describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore.")
-                                (ensureOreHoldIsSelectedInInventoryWindow
+                                (ensureFleetHangarIsSelectedInInventoryWindow
                                     context
                                     (inSpaceWithFleetHangarSelected context seeUndockingComplete)
                                 )
@@ -719,12 +719,15 @@ ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow
                                                     )
 
                                             Just fleetHangarTreeEntry ->
-                                                endDecisionPath
-                                                    (actWithoutFurtherReadings
-                                                        ( "Click the tree entry representing the fleet hangar."
-                                                        , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
-                                                        )
-                                                    )
+                                                describeBranch "Click the tree entry representing the fleet hangar."
+                                                    (fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft |> continueWithInventoryWindow inventoryWindow)
+                                                    
+                                                -- endDecisionPath
+                                                --     (actWithoutFurtherReadings
+                                                --         ( "Click the tree entry representing the fleet hangar."
+                                                --         , fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                --         )
+                                                --     )
                                 )
 
 
