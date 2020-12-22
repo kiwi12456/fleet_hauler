@@ -268,7 +268,7 @@ returnDronesAndRunAwayIfHitpointsAreTooLow context shipUI =
 
 generalSetupInUserInterface : ReadingFromGameClient -> Maybe DecisionPathNode
 generalSetupInUserInterface readingFromGameClient =
-    [ closeMessageBox, closeHybridWindow, ensureInfoPanelLocationInfoIsExpanded ]
+    [ closeHybridWindow, ensureInfoPanelLocationInfoIsExpanded ]
         |> List.filterMap
             (\maybeSetupDecisionFromGameReading ->
                 maybeSetupDecisionFromGameReading readingFromGameClient
