@@ -508,17 +508,12 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                         (Act
                                                                             { firstAction =
                                                                                     [ ( "Drag and drop."
-                                                                                    , EffectOnWindow.effectsForDragAndDrop
-                                                                                        { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                                                                        , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
-                                                                                        , mouseButton = MouseButtonLeft
-                                                                                        }
-                                                                                        ++ [ EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonLeft
-                                                                                            { x = itemInInventory.totalDisplayRegion.x
-                                                                                            , y = itemInInventory.totalDisplayRegion.y
-                                                                                            }
-                                                                                        ]
-                                                                                    )
+                                                                                        , [ EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonLeft
+                                                                                                { x = itemInInventory.totalDisplayRegion.x
+                                                                                                , y = itemInInventory.totalDisplayRegion.y
+                                                                                                }
+                                                                                            ]
+                                                                                        )
                                                                                     ]
                                                                                 , followingSteps =
                                                                                     [ ( "Check Ore Hold."
