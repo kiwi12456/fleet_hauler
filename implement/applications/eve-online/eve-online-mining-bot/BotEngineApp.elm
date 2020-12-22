@@ -720,7 +720,7 @@ ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow
 
                                             Just fleetHangarTreeEntry ->
                                                 describeBranch "Click the tree entry representing the fleet hangar."
-                                                    (fleetHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft |> continueWithInventoryWindow inventoryWindow)
+                                                    (continueWithInventoryWindow fleetHangarTreeEntry)
                                                     
                                                 -- endDecisionPath
                                                 --     (actWithoutFurtherReadings
