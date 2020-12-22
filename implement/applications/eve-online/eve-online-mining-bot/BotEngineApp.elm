@@ -424,7 +424,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
 
                         else
                             describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore.")
-                                (ensureFleetHangarIsSelectedInInventoryWindow
+                                (ensureOreHoldIsSelectedInInventoryWindow
                                     context
                                     (inSpaceWithFleetHangarSelected context seeUndockingComplete)
                                 )
@@ -507,15 +507,11 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                     (endDecisionPath
                                                                         (actWithoutFurtherReadings
                                                                             ( "Drag and drop."
-                                                                            , [
-                                                                                [EffectOnWindow.effectsForDragAndDrop
+                                                                            , EffectOnWindow.effectsForDragAndDrop
                                                                                 { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
                                                                                 , mouseButton = MouseButtonLeft
-                                                                                }]
-                                                                                , List ([EffectOnWindow.KeyUp EffectOnWindow.vkey_W])
-                                                                            ]
-
+                                                                                }
                                                                             )
                                                                         )
                                                                     )
