@@ -708,7 +708,7 @@ ensureOreHoldIsSelectedInInventoryWindow readingFromGameClient continueWithInven
                         )
 
 
-ensureFleetHangarIsSelectedInInventoryWindow : ReadingFromGameClient -> context -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
+ensureFleetHangarIsSelectedInInventoryWindow : ReadingFromGameClient -> BotDecisionContext -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
 ensureFleetHangarIsSelectedInInventoryWindow readingFromGameClient context continueWithInventoryWindow =
     case readingFromGameClient |> inventoryWindowWithFleetHangarSelectedFromGameClient of
         Just inventoryWindow ->
