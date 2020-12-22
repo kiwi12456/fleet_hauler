@@ -1475,10 +1475,8 @@ oreHoldFromInventoryWindow =
 oreHoldSizeFromInventoryWindow : ReadingFromGameClient -> Int
 oreHoldSizeFromInventoryWindow =
     inventoryWindowWithOreHoldSelectedFromGameClient
-        >> Maybe.andThen .selectedContainerCapacityGauge
-        >> Maybe.andThen Result.toMaybe
-        >> Maybe.andThen
-            (\capacity -> capacity.maximum |> Maybe.map (\maximum -> capacity.used * 100 // maximum))
+        >> .selectedContainerCapacityGauge
+        >> (\capacity -> capacity.maximum |> (\maximum -> capacity.used * 100 // maximum))
 
 fleetHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 fleetHangarFromInventoryWindow =
