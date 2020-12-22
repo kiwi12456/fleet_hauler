@@ -178,7 +178,7 @@ miningBotDecisionRoot context =
                             }
                             context
                             |> Maybe.withDefault
-                                (if (inventoryWindowWithOreHoldSelectedFromGameClient |> inventoryWindowSelectedContainerIsOreHold) then
+                                (if (inventoryWindowWithOreHoldSelectedFromGameClient2 |> inventoryWindowSelectedContainerIsOreHold) then
                                     (ensureFleetHangarIsSelectedInInventoryWindow
                                         context
                                         (inSpaceWithFleetHangarSelected context seeUndockingComplete)
@@ -1393,6 +1393,12 @@ capacityGaugeUsedPercent =
 
 inventoryWindowWithOreHoldSelectedFromGameClient : ReadingFromGameClient -> Maybe EveOnline.ParseUserInterface.InventoryWindow
 inventoryWindowWithOreHoldSelectedFromGameClient =
+    .inventoryWindows
+        >> List.filter inventoryWindowSelectedContainerIsOreHold
+        >> List.head
+
+inventoryWindowWithOreHoldSelectedFromGameClient2 : ReadingFromGameClient -> EveOnline.ParseUserInterface.InventoryWindow
+inventoryWindowWithOreHoldSelectedFromGameClient2 =
     .inventoryWindows
         >> List.filter inventoryWindowSelectedContainerIsOreHold
         >> List.head
