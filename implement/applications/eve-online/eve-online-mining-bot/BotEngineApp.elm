@@ -455,19 +455,27 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                 describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
 
                             Just fleetHangar ->
-                                (endDecisionPath
-                                    (actWithoutFurtherReadings
-                                        ( "Click at scroll control bottom"
-                                        , EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonRight
-                                            { x = fleetHangar.children.__maincontainer.totalDisplayRegion.x + 20
-                                            , y = fleetHangar.children.__maincontainer.totalDisplayRegion.y - 1
-                                            }
-                                            ++ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
-                                            , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
-                                            ]
+                                describeBranch "Select all ores in the fleet hangar."
+                                    (useContextMenuCascade
+                                        ( "Fleet Hangar", fleetHangar )
+                                        (useMenuEntryWithTextContaining "Warp to Member Within"
+                                            (useMenuEntryWithTextContaining "Within 0 m" menuCascadeCompleted)
                                         )
+                                        context.readingFromGameClient
                                     )
-                                )
+                                -- (endDecisionPath
+                                --     (actWithoutFurtherReadings
+                                --         ( "Click at scroll control bottom"
+                                --         , EffectOnWindow.effectsMouseClickAtLocation EffectOnWindow.MouseButtonRight
+                                --             { x = fleetHangar.children.__maincontainer.totalDisplayRegion.x + 20
+                                --             , y = fleetHangar.children.__maincontainer.totalDisplayRegion.y - 1
+                                --             }
+                                --             ++ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
+                                --             , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
+                                --             ]
+                                --         )
+                                --     )
+                                -- )
                                 
                         )
 
