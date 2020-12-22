@@ -620,14 +620,14 @@ approachFleetCommanderIfFarEnough context fleetCommanderOverviewEntry =
         Err error ->
             Just (describeBranch ("Failed to read the distance: " ++ error) askForHelpToGetUnstuck)
 
-ensureOreHoldIsSelectedInInventoryWindow : ReadingFromGameClient -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
-ensureOreHoldIsSelectedInInventoryWindow readingFromGameClient continueWithInventoryWindow =
-    case readingFromGameClient |> inventoryWindowWithOreHoldSelectedFromGameClient of
+ensureOreHoldIsSelectedInInventoryWindow : BotDecisionContext -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
+ensureOreHoldIsSelectedInInventoryWindow context continueWithInventoryWindow =
+    case context.readingFromGameClient |> inventoryWindowWithOreHoldSelectedFromGameClient of
         Just inventoryWindow ->
             continueWithInventoryWindow inventoryWindow
 
         Nothing ->
-            case readingFromGameClient.inventoryWindows |> List.head of
+            case context.readingFromGameClient.inventoryWindows |> List.head of
                 Nothing ->
                     describeBranch "I do not see an inventory window. Please open an inventory window." askForHelpToGetUnstuck
 
