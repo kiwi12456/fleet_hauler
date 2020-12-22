@@ -1302,7 +1302,7 @@ oreHoldFromInventoryWindow =
         >> List.head
         >> Maybe.map .uiNode
 
-fleetHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
+fleetHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe ChildOfNodeWithDisplayRegion
 fleetHangarFromInventoryWindow =
     .leftTreeEntries
         >> List.concatMap (.children >> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild)
