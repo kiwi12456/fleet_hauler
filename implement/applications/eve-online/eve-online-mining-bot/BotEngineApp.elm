@@ -1621,9 +1621,9 @@ numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow 
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
-        >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
-        >> List.sortBy (.totalDisplayRegion >> .y)
-        >> List.head
+        -- >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
+        -- >> List.sortBy (.totalDisplayRegion >> .y)
+        -- >> List.head
 
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
