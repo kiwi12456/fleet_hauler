@@ -1645,7 +1645,7 @@ numberOfItemsFromInventoryWindow =
         >> List.head
         >> .uiNode
         >> getAllContainedDisplayTexts
-        >> List.head
+        -- >> List.head
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
