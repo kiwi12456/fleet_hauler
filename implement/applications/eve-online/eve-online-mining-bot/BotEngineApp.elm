@@ -417,7 +417,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                         Nothing ->
                             describeBranch ("Cannot find inventory count.") askForHelpToGetUnstuck
                         Just actualCount ->
-                                (if (parseInt(actualCount)) > 100 then
+                                (if (toInt actualCount) > 100 then
                                     describeBranch ("Trigger stacking") askForHelpToGetUnstuck
                                 else
                                     describeBranch ("Don't stack") askForHelpToGetUnstuck
