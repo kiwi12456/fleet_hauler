@@ -1495,7 +1495,7 @@ numberOfItemsInInventoryWindow =
                     EveOnline.ParseUserInterface.InventoryItemsNotListView { items } ->
                         items
             )
-        >> Maybe.andThen List.length
+        >> List.length
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
