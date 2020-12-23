@@ -400,7 +400,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
         Just itemHangar ->
             let
                 numberOfInventoryItems =
-                    inventoryWindowWithItemHangarSelected.uiNode
+                    inventoryWindowWithItemHangarSelected.uiNode.uiNode
                         |> getAllContainedDisplayTexts
                         |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "<color=gray>Items")
                         |> List.head
