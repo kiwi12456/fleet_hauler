@@ -1637,15 +1637,14 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe UIElement
+numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe String
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
         >> List.head
         >> Maybe.map .uiNode
-        -- >> getAllContainedDisplayTexts
-        -- >> List.head
+        >> getSetTextFromDictEntries
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
@@ -1745,3 +1744,14 @@ getDisplayText uiNode =
             )
         |> List.sortBy (String.length >> negate)
         |> List.head
+
+getSetTextFromDictEntries : EveOnline.MemoryReading.UITreeNode -> Maybe String
+getSetTextFromDictEntries =
+    getStringPropertyFromDictEntries "_setText"
+
+
+getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode -> Maybe String
+getStringPropertyFromDictEntries dictEntryKey uiNode =
+    uiNode.dictEntriesOfInterest
+        |> Dict.get dictEntryKey
+        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
