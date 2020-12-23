@@ -1641,7 +1641,7 @@ numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe String
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
-        >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map (String.contains "numItemsLabel"))
+        >> List.filter (.uiNode >> getNameFromDictEntries >> String.contains "numItemsLabel")
         >> List.head
         >> Maybe.map .uiNode
         >> Maybe.andThen getAllContainedDisplayTexts
@@ -1727,11 +1727,11 @@ getStringPropertyFromDictEntries dictEntryKey uiNode =
         |> Dict.get dictEntryKey
         |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
 
-getAllContainedDisplayTexts : EveOnline.MemoryReading.UITreeNode -> List String
+getAllContainedDisplayTexts : EveOnline.MemoryReading.UITreeNode -> Maybe List String
 getAllContainedDisplayTexts uiNode =
     uiNode
         :: (uiNode |> EveOnline.MemoryReading.listDescendantsInUITreeNode)
-        |> List.filterMap getDisplayText
+        |> Maybe.andThen List.filterMap getDisplayText
 
 getDisplayText : EveOnline.MemoryReading.UITreeNode -> Maybe String
 getDisplayText uiNode =
