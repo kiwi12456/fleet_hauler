@@ -70,6 +70,13 @@ type alias UITreeNodeWithDisplayRegion =
     , totalDisplayRegion : DisplayRegion
     }
 
+type alias UITreeNodeWithDisplayRegion2 =
+    { children : Maybe (List ChildOfNodeWithDisplayRegion)
+    , selfDisplayRegion : DisplayRegion
+    , totalDisplayRegion : { height : Int, width : Int, x: Int, y: Int}
+    , uiNode : EveOnline.MemoryReading.UITreeNode
+    }
+
 type ChildOfNodeWithDisplayRegion
     = ChildWithRegion UITreeNodeWithDisplayRegion
     | ChildWithoutRegion EveOnline.MemoryReading.UITreeNode
@@ -1630,7 +1637,7 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : InventoryWindow -> List UITreeNodeWithDisplayRegion
+numberOfItemsFromInventoryWindow : InventoryWindow -> List UITreeNodeWithDisplayRegion2
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
