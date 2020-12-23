@@ -348,30 +348,60 @@ dockedWithOreHoldSelected context inventoryWindowWithOreHoldSelected =
             describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
 
         Just itemHangar ->
-            case inventoryWindowWithOreHoldSelected |> selectedContainerFirstItemFromInventoryWindow of
+            case inventoryWindowWithOreHoldSelected |> numberOfItemsInInventory of
                 Nothing ->
-                    describeBranch "I see no item in the ore hold. Check if we should undock."
-                        (continueIfShouldHide
-                            { ifShouldHide =
-                                describeBranch "Stay docked." waitForProgressInGame
-                            }
-                            context
-                            |> Maybe.withDefault (undockUsingStationWindow context)
-                        )
-
-                Just itemInInventory ->
-                    describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
-                        (endDecisionPath
-                            (actWithoutFurtherReadings
-                                ( "Drag and drop."
-                                , EffectOnWindow.effectsForDragAndDrop
-                                    { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                    , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
-                                    , mouseButton = MouseButtonLeft
+                    case inventoryWindowWithOreHoldSelected |> selectedContainerFirstItemFromInventoryWindow of
+                        Nothing ->
+                            describeBranch "I see no item in the ore hold. Check if we should undock."
+                                (continueIfShouldHide
+                                    { ifShouldHide =
+                                        describeBranch "Stay docked." waitForProgressInGame
                                     }
+                                    context
+                                    |> Maybe.withDefault (undockUsingStationWindow context)
                                 )
-                            )
-                        )
+
+                        Just itemInInventory ->
+                            describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
+                                (endDecisionPath
+                                    (actWithoutFurtherReadings
+                                        ( "Drag and drop."
+                                        , EffectOnWindow.effectsForDragAndDrop
+                                            { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                            , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
+                                            , mouseButton = MouseButtonLeft
+                                            }
+                                        )
+                                    )
+                                )
+
+                Just numItems ->
+                    describeBranch "There are " ++ numItems ++ " items in the item hangar."
+                        case inventoryWindowWithOreHoldSelected |> selectedContainerFirstItemFromInventoryWindow of
+                        Nothing ->
+                            describeBranch "I see no item in the ore hold. Check if we should undock."
+                                (continueIfShouldHide
+                                    { ifShouldHide =
+                                        describeBranch "Stay docked." waitForProgressInGame
+                                    }
+                                    context
+                                    |> Maybe.withDefault (undockUsingStationWindow context)
+                                )
+
+                        Just itemInInventory ->
+                            describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
+                                (endDecisionPath
+                                    (actWithoutFurtherReadings
+                                        ( "Drag and drop."
+                                        , EffectOnWindow.effectsForDragAndDrop
+                                            { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                            , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
+                                            , mouseButton = MouseButtonLeft
+                                            }
+                                        )
+                                    )
+                                )
+            
 
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
@@ -1482,6 +1512,20 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
+numberOfItemsInInventory : EveOnline.ParseUserInterface.InventoryWindow -> Maybe Int
+numberOfItemsInInventory =
+    .selectedContainerInventory
+        >> Maybe.andThen .itemsView
+        >> Maybe.map
+            (\itemsView ->
+                case itemsView of
+                    EveOnline.ParseUserInterface.InventoryItemsListView { items } ->
+                        items
+
+                    EveOnline.ParseUserInterface.InventoryItemsNotListView { items } ->
+                        items
+            )
+        >> Maybe.andThen List.length
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
