@@ -435,7 +435,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
 
                                                 Just itemInInventory ->
                                                     describeBranch "I see at least one item in the item hangar."
-                                                        (EndDecisionPath
+                                                        (endDecisionPath
                                                             (Act
                                                                 { firstAction =
                                                                     itemInInventory
