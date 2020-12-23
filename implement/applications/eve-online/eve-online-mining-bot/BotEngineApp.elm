@@ -1624,7 +1624,7 @@ selectedContainerFirstItemFromInventoryWindow =
 
 numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe String
 numberOfItemsFromInventoryWindow =
-    .uiNode
+    .leftTreeEntries
         >> listDescendantsWithDisplayRegion
         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
         >> List.head
