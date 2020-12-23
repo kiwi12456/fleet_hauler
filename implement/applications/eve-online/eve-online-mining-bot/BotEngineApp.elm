@@ -460,24 +460,14 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                     )
                         )
                 Just numItems ->
-                    case numItems |> getDisplayText of
-                        Nothing ->
-                            describeBranch "I see no item in the ore hold. Check if we should undock."
-                                (continueIfShouldHide
-                                    { ifShouldHide =
-                                        describeBranch "Stay docked." waitForProgressInGame
-                                    }
-                                    context
-                                    |> Maybe.withDefault (undockUsingStationWindow context)
-                                )
-                        Just numItemsText ->
-                            describeBranch "Text is: " ++ numItemsText
-                                (continueIfShouldHide
-                                    { ifShouldHide =
-                                        describeBranch "Stay docked." waitForProgressInGame
-                                    }
-                                    context
-                                )
+                    describeBranch "I see no item in the ore hold. Check if we should undock."
+                        (continueIfShouldHide
+                            { ifShouldHide =
+                                describeBranch "Stay docked." waitForProgressInGame
+                            }
+                            context
+                            |> Maybe.withDefault (undockUsingStationWindow context)
+                        )
 
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
