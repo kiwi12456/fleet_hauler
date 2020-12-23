@@ -1598,7 +1598,8 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-selectedContainerAllItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe (List EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion)
+-- selectedContainerAllItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe (List EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion)
+selectedContainerAllItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe Int
 selectedContainerAllItemsFromInventoryWindow =
     .selectedContainerInventory
         >> Maybe.andThen .itemsView
@@ -1611,6 +1612,7 @@ selectedContainerAllItemsFromInventoryWindow =
                     EveOnline.ParseUserInterface.InventoryItemsNotListView { items } ->
                         items
             )
+        >> Maybe.andThen List.length
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
