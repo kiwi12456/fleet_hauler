@@ -412,7 +412,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                 Just numberOfItems ->
                     let
                         textValue =
-                            numberOfItems
+                            numberOfItems.uiNode
                                 |> getAllContainedDisplayTexts
                                 |> List.head
                     in
