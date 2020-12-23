@@ -435,10 +435,6 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                                         )
 
                                                 Just itemInInventory ->
-                                                    let
-                                                        withTextContainingIgnoringCase textToSearch =
-                                                            List.filter (.text >> String.toLower >> (==) (textToSearch |> String.toLower)) >> List.head
-                                                    in
                                                     describeBranch "I see at least one item in the item hangar."
                                                         (endDecisionPath
                                                             (Act
@@ -448,7 +444,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                                                 , followingSteps =
                                                                     [ ( "Trigger stacking."
                                                                     , lastContextMenuOrSubmenu
-                                                                            >> Maybe.andThen (withTextContainingIgnoringCase "stack all")
+                                                                            >> Maybe.andThen ("Stack All")
                                                                             >> Maybe.map (.uiNode >> clickOnUIElement MouseButtonLeft)
                                                                     )
                                                                     ]
