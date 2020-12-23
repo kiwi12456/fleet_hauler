@@ -421,8 +421,36 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                     Nothing ->
                                         describeBranch ("No integer found.") askForHelpToGetUnstuck
                                     Just actualInteger ->
-                                        if (actualInteger > 100) then
-                                            describeBranch ("Trigger stacking") askForHelpToGetUnstuck
+                                        if (actualInteger > 2) then
+                                            case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
+                                                Nothing ->
+                                                    describeBranch "I see no item in the . Check if we should undock."
+                                                        (continueIfShouldHide
+                                                            { ifShouldHide =
+                                                                describeBranch "Stay docked." waitForProgressInGame
+                                                            }
+                                                            context
+                                                            |> Maybe.withDefault (undockUsingStationWindow context)
+                                                        )
+
+                                                Just itemInInventory ->
+                                                    describeBranch "I see at least one item in the item hangar."
+                                                        (EndDecisionPath
+                                                            (Act
+                                                                { firstAction =
+                                                                    itemInInventory
+                                                                        |> clickOnUIElement MouseButtonRight
+                                                                , followingSteps =
+                                                                    [ ( "Trigger stacking."
+                                                                    , lastContextMenuOrSubmenu
+                                                                            >> Maybe.andThen (menuEntryContainingTextIgnoringCase "stack all")
+                                                                            >> Maybe.map (.uiNode >> clickOnUIElement MouseButtonLeft)
+                                                                    )
+                                                                    ]
+                                                                }
+                                                            )
+                                                        )
+                                                
                                         else
                                             describeBranch ("Don't stack") askForHelpToGetUnstuck
                                 
