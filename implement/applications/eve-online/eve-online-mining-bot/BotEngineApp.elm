@@ -66,6 +66,17 @@ type alias UITreeNodeWithDisplayRegion =
     , totalDisplayRegion : DisplayRegion
     }
 
+type ChildOfNodeWithDisplayRegion
+    = ChildWithRegion UITreeNodeWithDisplayRegion
+    | ChildWithoutRegion EveOnline.MemoryReading.UITreeNode
+
+type alias DisplayRegion =
+    { x : Int
+    , y : Int
+    , width : Int
+    , height : Int
+    }
+
 {-| Sources for the defaults:
   - <https://forum.botengine.org/t/mining-bot-wont-approach/3162>
 -}
