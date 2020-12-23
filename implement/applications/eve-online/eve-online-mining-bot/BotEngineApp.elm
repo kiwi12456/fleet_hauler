@@ -17,9 +17,8 @@ module BotEngineApp exposing
 import BotEngine.Interface_To_Host_20200824 as InterfaceToHost
 import EveOnline.MemoryReading
     exposing
-    ( ContextMenu
-    , ContextMenuEntry
-    , ParsedUserInterface
+    ( 
+        ParsedUserInterface
     )
 import Json.Decode
 import Common.AppSettings as AppSettings
