@@ -1728,7 +1728,7 @@ getStringPropertyFromDictEntries dictEntryKey uiNode =
         |> Dict.get dictEntryKey
         |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
 
-getAllContainedDisplayTexts : EveOnline.MemoryReading.UITreeNode -> Maybe List(String)
+getAllContainedDisplayTexts : EveOnline.MemoryReading.UITreeNode -> Maybe String
 getAllContainedDisplayTexts uiNode =
     uiNode
         :: (uiNode |> EveOnline.MemoryReading.listDescendantsInUITreeNode)
