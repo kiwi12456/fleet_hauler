@@ -16,6 +16,7 @@ module BotEngineApp exposing
 
 import BotEngine.Interface_To_Host_20200824 as InterfaceToHost
 import EveOnline.MemoryReading
+import Json.Decode
 import Common.AppSettings as AppSettings
 import Common.Basics exposing (listElementAtWrappedIndex)
 import Common.DecisionTree exposing (describeBranch, endDecisionPath)
