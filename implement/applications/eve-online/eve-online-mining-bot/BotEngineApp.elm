@@ -1482,7 +1482,7 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsInInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe List
+numberOfItemsInInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe Int
 numberOfItemsInInventoryWindow =
     .selectedContainerInventory
         >> Maybe.andThen .itemsView
@@ -1490,10 +1490,10 @@ numberOfItemsInInventoryWindow =
             (\itemsView ->
                 case itemsView of
                     EveOnline.ParseUserInterface.InventoryItemsListView { items } ->
-                        items
+                        items.length
 
                     EveOnline.ParseUserInterface.InventoryItemsNotListView { items } ->
-                        items
+                        items.length
             )
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
