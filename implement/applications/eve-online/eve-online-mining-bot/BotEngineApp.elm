@@ -460,7 +460,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                     )
                         )
                 Just numItems ->
-                    case getDisplayText of
+                    case numItems |> getDisplayText of
                         Nothing ->
                             describeBranch "I see no item in the ore hold. Check if we should undock."
                                 (continueIfShouldHide
@@ -471,7 +471,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                     |> Maybe.withDefault (undockUsingStationWindow context)
                                 )
                         Just numItemsText ->
-                            describeBrance "Text is: " ++ numItemsText
+                            describeBranch "Text is: " ++ numItemsText
                                 (continueIfShouldHide
                                     { ifShouldHide =
                                         describeBranch "Stay docked." waitForProgressInGame
