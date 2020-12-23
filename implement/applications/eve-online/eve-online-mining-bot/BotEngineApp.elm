@@ -1644,8 +1644,9 @@ numberOfItemsFromInventoryWindow =
         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
         >> List.head
         >> Maybe.map .uiNode
-
-
+        >> getAllContainedDisplayTexts 
+        >> List.map (String.toLower >> String.trim)
+        
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
     .leftTreeEntries
