@@ -435,7 +435,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                 Nothing ->
                     describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
 
-                Just Item ->
+                Just itemString ->
                     describeBranch "Item found." askForHelpToGetUnstuck
                 
 
