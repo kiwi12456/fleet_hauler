@@ -1682,6 +1682,21 @@ listDescendantsWithDisplayRegion parent =
         |> listChildrenWithDisplayRegion
         |> List.concatMap (\child -> child :: listDescendantsWithDisplayRegion child)
 
+listChildrenWithDisplayRegion : UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
+listChildrenWithDisplayRegion parent =
+    parent.children
+        |> Maybe.withDefault []
+        |> List.filterMap
+            (\child ->
+                case child of
+                    ChildWithoutRegion _ ->
+                        Nothing
+
+                    ChildWithRegion childWithRegion ->
+                        Just childWithRegion
+            )
+
+
 getNameFromDictEntries : EveOnline.MemoryReading.UITreeNode -> Maybe String
 getNameFromDictEntries =
     getStringPropertyFromDictEntries "_name"
