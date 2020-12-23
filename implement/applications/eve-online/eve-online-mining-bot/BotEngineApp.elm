@@ -15,8 +15,6 @@ module BotEngineApp exposing
     )
 
 import BotEngine.Interface_To_Host_20200824 as InterfaceToHost
-import EveOnline.MemoryReading
-import Json.Decode
 import Common.AppSettings as AppSettings
 import Common.Basics exposing (listElementAtWrappedIndex)
 import Common.DecisionTree exposing (describeBranch, endDecisionPath)
@@ -50,22 +48,15 @@ import EveOnline.AppFramework
         , useMenuEntryWithTextEqual
         , useRandomMenuEntry
         , waitForProgressInGame
-        , lastContextMenuOrSubmenu
         )
 import EveOnline.ParseUserInterface
     exposing
         ( OverviewWindowEntry
         , centerFromDisplayRegion
         , getAllContainedDisplayTexts
-        , UITreeNodeWithDisplayRegion
-        , InventoryWindowLeftTreeEntry
-        , InventoryWindowCapacityGauge
-        , Inventory
-        , listDescendantsWithDisplayRegion
-        , listChildrenWithDisplayRegion
-        , getAllContainedDisplayTexts
         )
 import Regex
+
 
 {-| Sources for the defaults:
   - <https://forum.botengine.org/t/mining-bot-wont-approach/3162>
@@ -444,9 +435,6 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                                 
                                         else
                                             describeBranch ("Don't stack") askForHelpToGetUnstuck
-                                
-                            
-                
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
 undockUsingStationWindow context =
@@ -1629,13 +1617,19 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
--- numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe String
--- numberOfItemsFromInventoryWindow  =
---     listDescendantsWithDisplayRegion
---         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
---         >> List.head
---         >> Maybe.map .uiNode
---         >> Maybe.andThen getSetTextFromDictEntries
+selectedContainerAllItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe (List EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion)
+selectedContainerAllItemsFromInventoryWindow =
+    .selectedContainerInventory
+        >> Maybe.andThen .itemsView
+        >> Maybe.map
+            (\itemsView ->
+                case itemsView of
+                    EveOnline.ParseUserInterface.InventoryItemsListView { items } ->
+                        items
+
+                    EveOnline.ParseUserInterface.InventoryItemsNotListView { items } ->
+                        items
+            )
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
