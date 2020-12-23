@@ -1642,7 +1642,6 @@ numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
         >> List.filter (.uiNode >> getNameFromDictEntries >> (==) "numItemsLabel")
-        >> List.head
         >> getAllContainedDisplayTexts
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
