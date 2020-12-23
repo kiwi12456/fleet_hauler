@@ -408,9 +408,19 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
             in
             case numberOfInventoryItems of
                 Nothing ->
-                    describeBranch ("Cannot find search string.") askForHelpToGetUnstuck
+                    describeBranch ("Cannot find numitemslabel.") askForHelpToGetUnstuck
                 Just numberOfItems ->
-                    describeBranch ("I do not see the item hangar in the inventory." ++ numberOfItems) askForHelpToGetUnstuck
+                    let
+                        textValue =
+                            numberOfItems
+                                |> getAllContainedDisplayTexts
+                                |> List.head
+                    in
+                    case textValue of
+                        Nothing ->
+                            describeBranch ("Cannot find _setText.") askForHelpToGetUnstuck
+                        Just valueFound ->
+                            describeBranch ("Value found!") askForHelpToGetUnstuck
                 
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
