@@ -1667,3 +1667,9 @@ listDescendantsWithDisplayRegion parent =
 getNameFromDictEntries : EveOnline.MemoryReading.UITreeNode -> Maybe String
 getNameFromDictEntries =
     getStringPropertyFromDictEntries "_name"
+
+getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode -> Maybe String
+getStringPropertyFromDictEntries dictEntryKey uiNode =
+    uiNode.dictEntriesOfInterest
+        |> Dict.get dictEntryKey
+        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
