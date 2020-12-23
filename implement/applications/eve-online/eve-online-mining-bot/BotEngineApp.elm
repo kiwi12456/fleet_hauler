@@ -431,35 +431,8 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
             describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
 
         Just itemHangar ->
-            case numberOfItemsFromInventoryWindow of
+            case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                 Nothing ->
-                    describeBranch "I see no item in the ore hold. Check if we should undock."
-                        (case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
-                            Nothing ->
-                                describeBranch "I see no item in the ore hold. Check if we should undock."
-                                    (continueIfShouldHide
-                                        { ifShouldHide =
-                                            describeBranch "Stay docked." waitForProgressInGame
-                                        }
-                                        context
-                                        |> Maybe.withDefault (undockUsingStationWindow context)
-                                    )
-
-                            Just itemInInventory ->
-                                describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
-                                    (endDecisionPath
-                                        (actWithoutFurtherReadings
-                                            ( "Drag and drop."
-                                            , EffectOnWindow.effectsForDragAndDrop
-                                                { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                                , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
-                                                , mouseButton = MouseButtonLeft
-                                                }
-                                            )
-                                        )
-                                    )
-                        )
-                Just numItems ->
                     describeBranch "I see no item in the ore hold. Check if we should undock."
                         (continueIfShouldHide
                             { ifShouldHide =
@@ -469,6 +442,19 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                             |> Maybe.withDefault (undockUsingStationWindow context)
                         )
 
+                Just itemInInventory ->
+                    describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
+                        (endDecisionPath
+                            (actWithoutFurtherReadings
+                                ( "Drag and drop."
+                                , EffectOnWindow.effectsForDragAndDrop
+                                    { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                    , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
+                                    , mouseButton = MouseButtonLeft
+                                    }
+                                )
+                            )
+                        )
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
 undockUsingStationWindow context =
@@ -1651,13 +1637,13 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe UITreeNodeWithDisplayRegion
+numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe UIElement
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
         >> List.head
-        -- >> Maybe.map .uiNode
+        >> Maybe.map .uiNode
         -- >> getAllContainedDisplayTexts
         -- >> List.head
 
