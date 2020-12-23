@@ -1637,13 +1637,13 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe String
+numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe UIElement
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
         >> List.head
-        >> Maybe.andThen .uiNode
+        -- >> Maybe.andThen .uiNode
         -- >> getAllContainedDisplayTexts
         -- >> List.head
 
