@@ -1637,7 +1637,7 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe UITreeNodeWithDisplayRegion2
+numberOfItemsFromInventoryWindow : InventoryWindow -> String
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
