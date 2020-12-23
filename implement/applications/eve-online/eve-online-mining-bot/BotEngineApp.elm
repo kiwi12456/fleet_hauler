@@ -57,6 +57,9 @@ import EveOnline.ParseUserInterface
         , centerFromDisplayRegion
         , getAllContainedDisplayTexts
         , UITreeNodeWithDisplayRegion
+        , InventoryWindowLeftTreeEntry
+        , InventoryWindowCapacityGauge
+        , Inventory
         )
 import Regex
 
@@ -81,10 +84,10 @@ type alias DisplayRegion =
 type alias InventoryWindow =
     { buttonToSwitchToListView : Maybe UITreeNodeWithDisplayRegion
     , uiNode : UITreeNodeWithDisplayRegion
-    , leftTreeEntries : List InventoryWindowLeftTreeEntry
+    , leftTreeEntries : List EveOnline.ParseUserInterface.InventoryWindowLeftTreeEntry
     , subCaptionLabelText : Maybe String
-    , selectedContainerCapacityGauge : Maybe (Result String InventoryWindowCapacityGauge)
-    , selectedContainerInventory : Maybe Inventory
+    , selectedContainerCapacityGauge : Maybe (Result String EveOnline.ParseUserInterface.InventoryWindowCapacityGauge)
+    , selectedContainerInventory : Maybe EveOnline.ParseUserInterface.Inventory
     }
 
 {-| Sources for the defaults:
