@@ -401,26 +401,16 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
         Just itemHangar ->
             let
                 numberOfInventoryItems =
-                    inventoryWindowWithItemHangarSelected.uiNode
-                        |> listChildrenWithDisplayRegion
-                        -- |> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map String.toLower >> (==) (Just "numitemslabel"))
+                    inventoryWindowWithItemHangarSelected.uiNode.uiNode
+                        |> getAllContainedDisplayTexts
+                        |> List.any (String.toLower >> String.contains "items"))
                         |> List.head
             in
             case numberOfInventoryItems of
                 Nothing ->
                     describeBranch ("Cannot find numitemslabel.") askForHelpToGetUnstuck
                 Just numberOfItems ->
-                    let
-                        textValue =
-                            numberOfItems.uiNode
-                                |> getAllContainedDisplayTexts
-                                |> List.head
-                    in
-                    case textValue of
-                        Nothing ->
-                            describeBranch ("Cannot find _setText.") askForHelpToGetUnstuck
-                        Just valueFound ->
-                            describeBranch ("Value found!") askForHelpToGetUnstuck
+                    describeBranch ("Value found!" ++ numberOfItems) askForHelpToGetUnstuck
                 
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
