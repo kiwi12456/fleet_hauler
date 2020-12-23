@@ -417,11 +417,15 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                         Nothing ->
                             describeBranch ("Cannot find inventory count.") askForHelpToGetUnstuck
                         Just actualCount ->
-                                (if (String.toInt actualCount) > 100 then
-                                    describeBranch ("Trigger stacking") askForHelpToGetUnstuck
-                                else
-                                    describeBranch ("Don't stack") askForHelpToGetUnstuck
-                                )
+                                case (String.toInt actualCount) of
+                                    Nothing ->
+                                        describeBranch ("No integer found.") askForHelpToGetUnstuck
+                                    Just actualInteger ->
+                                        if (actualInteger > 100) then
+                                            describeBranch ("Trigger stacking") askForHelpToGetUnstuck
+                                        else
+                                            describeBranch ("Don't stack") askForHelpToGetUnstuck
+                                
                             
                 
 
