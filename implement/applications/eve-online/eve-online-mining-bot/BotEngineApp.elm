@@ -411,7 +411,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
             in
             case numberOfInventoryItems of
                 Nothing ->
-                    describeBranch ("Cannot find numitemslabel.") askForHelpToGetUnstuck
+                    describeBranch ("Cannot find <color=gray>items.") askForHelpToGetUnstuck
                 Just numberOfItems ->
                    case (String.split " " numberOfItems |> List.head) of
                         Nothing ->
