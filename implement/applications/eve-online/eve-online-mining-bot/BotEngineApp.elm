@@ -425,7 +425,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                         if (actualInteger > 2) then
                                             case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                                                 Nothing ->
-                                                    describeBranch "I see no item in the . Check if we should undock."
+                                                    describeBranch "I see no item in the item hangar. Check if we should undock."
                                                         (continueIfShouldHide
                                                             { ifShouldHide =
                                                                 describeBranch "Stay docked." waitForProgressInGame
@@ -435,21 +435,11 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                                         )
 
                                                 Just itemInInventory ->
-                                                    describeBranch "I see at least one item in the item hangar."
-                                                        (endDecisionPath
-                                                            (Act
-                                                                { firstAction =
-                                                                    itemInInventory
-                                                                        |> clickOnUIElement MouseButtonRight
-                                                                , followingSteps =
-                                                                    [ ( "Trigger stacking."
-                                                                    , lastContextMenuOrSubmenu
-                                                                            >> Maybe.andThen ("Stack All")
-                                                                            >> Maybe.map (.uiNode >> clickOnUIElement MouseButtonLeft)
-                                                                    )
-                                                                    ]
-                                                                }
-                                                            )
+                                                    describeBranch "I see at least 100 items in the item hangar. Stack them."
+                                                        (useContextMenuCascade
+                                                            ( "Item Hangar", itemInInventory )
+                                                                (useMenuEntryWithTextContaining "Stack All" menuCascadeCompleted)
+                                                            context.readingFromGameClient
                                                         )
                                                 
                                         else
