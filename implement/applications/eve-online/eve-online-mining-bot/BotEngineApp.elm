@@ -1622,7 +1622,7 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe String
+numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe String
 numberOfItemsFromInventoryWindow =
     .leftTreeEntries
         >> listDescendantsWithDisplayRegion
@@ -1631,7 +1631,7 @@ numberOfItemsFromInventoryWindow =
         >> Maybe.map .uiNode
         >> Maybe.andThen getSetTextFromDictEntries
 
-itemHangarFromInventoryWindow : InventoryWindow -> Maybe UIElement
+itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
     .leftTreeEntries
         >> List.filter (.text >> String.toLower >> String.contains "item hangar")
