@@ -16,10 +16,6 @@ module BotEngineApp exposing
 
 import BotEngine.Interface_To_Host_20200824 as InterfaceToHost
 import EveOnline.MemoryReading
-    exposing
-    ( 
-        ParsedUserInterface
-    )
 import Json.Decode
 import Common.AppSettings as AppSettings
 import Common.Basics exposing (listElementAtWrappedIndex)
@@ -54,6 +50,7 @@ import EveOnline.AppFramework
         , useMenuEntryWithTextEqual
         , useRandomMenuEntry
         , waitForProgressInGame
+        , lastContextMenuOrSubmenu
         )
 import EveOnline.ParseUserInterface
     exposing
@@ -438,6 +435,10 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                                         )
 
                                                 Just itemInInventory ->
+                                                    let
+                                                        withTextContainingIgnoringCase textToSearch =
+                                                            List.filter (.text >> String.toLower >> (==) (textToSearch |> String.toLower)) >> List.head
+                                                    in
                                                     describeBranch "I see at least one item in the item hangar."
                                                         (endDecisionPath
                                                             (Act
@@ -447,7 +448,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                                                 , followingSteps =
                                                                     [ ( "Trigger stacking."
                                                                     , lastContextMenuOrSubmenu
-                                                                            >> Maybe.andThen (menuEntryContainingTextIgnoringCase "stack all")
+                                                                            >> Maybe.andThen (withTextContainingIgnoringCase "stack all")
                                                                             >> Maybe.map (.uiNode >> clickOnUIElement MouseButtonLeft)
                                                                     )
                                                                     ]
@@ -1698,14 +1699,3 @@ shipManeuverIsApproaching =
         >> Maybe.map ((==) EveOnline.ParseUserInterface.ManeuverApproach)
         -- If the ship is just floating in space, there might be no indication displayed.
         >> Maybe.withDefault False
-
-menuEntryContainingTextIgnoringCase : String -> EveOnline.MemoryReading.ContextMenu -> Maybe EveOnline.MemoryReading.ContextMenuEntry
-menuEntryContainingTextIgnoringCase textToSearch =
-    .entries
-        >> List.filter (.text >> String.toLower >> String.contains (textToSearch |> String.toLower))
-        >> List.sortBy (.text >> String.trim >> String.length)
-        >> List.head
-
-lastContextMenuOrSubmenu : ParsedUserInterface -> Maybe EveOnline.MemoryReading.ContextMenu
-lastContextMenuOrSubmenu =
-    .contextMenus >> List.head
