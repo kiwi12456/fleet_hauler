@@ -403,7 +403,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                 numberOfInventoryItems =
                     inventoryWindowWithItemHangarSelected.uiNode
                         |> listChildrenWithDisplayRegion
-                        |> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map String.toLower >> (==) (Just "numitemslabel"))
+                        -- |> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map String.toLower >> (==) (Just "numitemslabel"))
                         |> List.head
             in
             case numberOfInventoryItems of
