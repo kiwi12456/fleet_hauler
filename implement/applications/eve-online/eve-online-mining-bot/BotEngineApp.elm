@@ -1598,21 +1598,14 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
--- selectedContainerAllItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe (List EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion)
-selectedContainerAllItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe Int
-selectedContainerAllItemsFromInventoryWindow =
+selectedContainerFirstItemFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
+selectedContainerFirstItemFromInventoryWindow =
     .selectedContainerInventory
-        >> Maybe.andThen .itemsView
-        >> Maybe.map
-            (\itemsView ->
-                case itemsView of
-                    EveOnline.ParseUserInterface.InventoryItemsListView { items } ->
-                        items
+        >> listDescendantsWithDisplayRegion
+        >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
+        >> List.sortBy (.totalDisplayRegion >> .y)
+        >> List.head
 
-                    EveOnline.ParseUserInterface.InventoryItemsNotListView { items } ->
-                        items
-            )
-        >> List.length
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
@@ -1662,3 +1655,14 @@ shipManeuverIsApproaching =
         >> Maybe.map ((==) EveOnline.ParseUserInterface.ManeuverApproach)
         -- If the ship is just floating in space, there might be no indication displayed.
         >> Maybe.withDefault False
+
+
+listDescendantsWithDisplayRegion : UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
+listDescendantsWithDisplayRegion parent =
+    parent
+        |> listChildrenWithDisplayRegion
+        |> List.concatMap (\child -> child :: listDescendantsWithDisplayRegion child)
+
+getNameFromDictEntries : EveOnline.MemoryReading.UITreeNode -> Maybe String
+getNameFromDictEntries =
+    getStringPropertyFromDictEntries "_name"
