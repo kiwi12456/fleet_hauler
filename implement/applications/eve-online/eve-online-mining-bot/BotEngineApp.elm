@@ -60,7 +60,7 @@ import EveOnline.ParseUserInterface
         , InventoryWindowLeftTreeEntry
         , InventoryWindowCapacityGauge
         , Inventory
-        , ChildOfNodeWithDisplayRegion
+        , listDescendantsWithDisplayRegion
         )
 import Regex
 
@@ -1646,27 +1646,6 @@ shipManeuverIsApproaching =
         >> Maybe.map ((==) EveOnline.ParseUserInterface.ManeuverApproach)
         -- If the ship is just floating in space, there might be no indication displayed.
         >> Maybe.withDefault False
-
-
-listDescendantsWithDisplayRegion : UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
-listDescendantsWithDisplayRegion parent =
-    parent
-        |> listChildrenWithDisplayRegion
-        |> List.concatMap (\child -> child :: listDescendantsWithDisplayRegion child)
-
-listChildrenWithDisplayRegion : UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
-listChildrenWithDisplayRegion parent =
-    parent.children
-        |> Maybe.withDefault []
-        |> List.filterMap
-            (\child ->
-                case child of
-                    ChildWithoutRegion _ ->
-                        Nothing
-
-                    ChildWithRegion childWithRegion ->
-                        Just childWithRegion
-            )
 
 
 getNameFromDictEntries : EveOnline.MemoryReading.UITreeNode -> Maybe String
