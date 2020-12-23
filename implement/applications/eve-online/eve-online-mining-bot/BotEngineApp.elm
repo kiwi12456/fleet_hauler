@@ -1679,3 +1679,11 @@ getStringPropertyFromDictEntries dictEntryKey uiNode =
     uiNode.dictEntriesOfInterest
         |> Dict.get dictEntryKey
         |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
+
+getSubstringBetweenXmlTagsAfterMarker : String -> String -> Maybe String
+getSubstringBetweenXmlTagsAfterMarker marker =
+    String.split marker
+        >> List.drop 1
+        >> List.head
+        >> Maybe.andThen (String.split ">" >> List.drop 1 >> List.head)
+        >> Maybe.andThen (String.split "<" >> List.head)
