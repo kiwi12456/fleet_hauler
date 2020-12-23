@@ -1617,9 +1617,9 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
+numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UITreeNodeWithDisplayRegion
 numberOfItemsFromInventoryWindow =
-    .selectedContainerInventory
+    .uiNode
         >> listDescendantsWithDisplayRegion
         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
         >> List.sortBy (.totalDisplayRegion >> .y)
