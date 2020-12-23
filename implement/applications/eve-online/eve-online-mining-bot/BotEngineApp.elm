@@ -85,7 +85,6 @@ type alias InventoryWindow =
     , subCaptionLabelText : Maybe String
     , selectedContainerCapacityGauge : Maybe (Result String InventoryWindowCapacityGauge)
     , selectedContainerInventory : Maybe Inventory
-    , 
     }
 
 {-| Sources for the defaults:
