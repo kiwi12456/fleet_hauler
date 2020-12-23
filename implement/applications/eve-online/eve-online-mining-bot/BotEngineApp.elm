@@ -62,6 +62,7 @@ import EveOnline.ParseUserInterface
         , Inventory
         , listDescendantsWithDisplayRegion
         , listChildrenWithDisplayRegion
+        , getAllContainedDisplayTexts
         )
 import Regex
 
@@ -401,10 +402,8 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
         Just itemHangar ->
             let
                 numberOfInventoryItems =
-                    inventoryWindowWithItemHangarSelected.uiNode.uiNode
-                        |> getAllContainedDisplayTexts
-                        |> List.any (String.toLower >> String.contains "items"))
-                        |> List.head
+                    inventoryWindowWithItemHangarSelected
+                        |> List.filter (.uiNode >> .uiNode >> EveOnline.ParseUserInterface.getAllContainedDisplayTexts >> List.any (String.toLower >> String.contains "items"))
             in
             case numberOfInventoryItems of
                 Nothing ->
@@ -1650,45 +1649,3 @@ shipManeuverIsApproaching =
         >> Maybe.map ((==) EveOnline.ParseUserInterface.ManeuverApproach)
         -- If the ship is just floating in space, there might be no indication displayed.
         >> Maybe.withDefault False
-
-
-getNameFromDictEntries : EveOnline.MemoryReading.UITreeNode -> Maybe String
-getNameFromDictEntries =
-    getStringPropertyFromDictEntries "_name"
-
-getAllContainedDisplayTexts : EveOnline.MemoryReading.UITreeNode -> List String
-getAllContainedDisplayTexts uiNode =
-    uiNode
-        :: (uiNode |> EveOnline.MemoryReading.listDescendantsInUITreeNode)
-        |> List.filterMap getDisplayText
-
-getDisplayText : EveOnline.MemoryReading.UITreeNode -> Maybe String
-getDisplayText uiNode =
-    [ "_setText", "_text" ]
-        |> List.filterMap
-            (\displayTextPropertyName ->
-                uiNode.dictEntriesOfInterest
-                    |> Dict.get displayTextPropertyName
-                    |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
-            )
-        |> List.sortBy (String.length >> negate)
-        |> List.head
-
-getSetTextFromDictEntries : EveOnline.MemoryReading.UITreeNode -> Maybe String
-getSetTextFromDictEntries =
-    getStringPropertyFromDictEntries "_setText"
-
-
-getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode -> Maybe String
-getStringPropertyFromDictEntries dictEntryKey uiNode =
-    uiNode.dictEntriesOfInterest
-        |> Dict.get dictEntryKey
-        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
-
-getSubstringBetweenXmlTagsAfterMarker : String -> String -> Maybe String
-getSubstringBetweenXmlTagsAfterMarker marker =
-    String.split marker
-        >> List.drop 1
-        >> List.head
-        >> Maybe.andThen (String.split ">" >> List.drop 1 >> List.head)
-        >> Maybe.andThen (String.split "<" >> List.head)
