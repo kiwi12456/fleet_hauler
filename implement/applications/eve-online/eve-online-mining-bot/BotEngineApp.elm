@@ -1630,7 +1630,7 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> List UITreeNodeWithDisplayRegion
+numberOfItemsFromInventoryWindow : InventoryWindow -> List UITreeNodeWithDisplayRegion
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
