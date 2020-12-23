@@ -59,6 +59,12 @@ import EveOnline.ParseUserInterface
         )
 import Regex
 
+type alias UITreeNodeWithDisplayRegion =
+    { uiNode : EveOnline.MemoryReading.UITreeNode
+    , children : Maybe (List ChildOfNodeWithDisplayRegion)
+    , selfDisplayRegion : DisplayRegion
+    , totalDisplayRegion : DisplayRegion
+    }
 
 {-| Sources for the defaults:
   - <https://forum.botengine.org/t/mining-bot-wont-approach/3162>
