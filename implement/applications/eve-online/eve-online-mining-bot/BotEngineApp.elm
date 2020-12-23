@@ -58,6 +58,8 @@ import EveOnline.ParseUserInterface
         , getAllContainedDisplayTexts
         , UITreeNodeWithDisplayRegion
         , ChildOfNodeWithDisplayRegion
+        , ChildwithoutRegion
+        , ChildwithRegion
         , DisplayRegion
         , InventoryWindow
         )
