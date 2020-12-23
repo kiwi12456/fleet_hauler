@@ -408,14 +408,12 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                         |> getAllContainedDisplayTexts
                         |> List.filter (String.toLower >> String.contains "<color=gray>items")
                         |> List.head
-                        |> Maybe.andThen String.split " "
-                        |> List.head
             in
             case numberOfInventoryItems of
                 Nothing ->
                     describeBranch ("Cannot find numitemslabel.") askForHelpToGetUnstuck
                 Just numberOfItems ->
-                    describeBranch ("Value found!" ++ numberOfItems) askForHelpToGetUnstuck
+                    describeBranch ("Value found!" ++ String.split " " numberOfItems) askForHelpToGetUnstuck
                 
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
