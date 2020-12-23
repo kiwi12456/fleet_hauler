@@ -405,7 +405,11 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                         |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "<color=gray>Items")
                         |> List.head
             in
-                describeBranch ("I do not see the item hangar in the inventory." ++ numberOfInventoryItems) askForHelpToGetUnstuck
+            case numberOfInventoryItems of
+                Nothing ->
+                    describeBranch ("I do not see the item hangar in the inventory.") askForHelpToGetUnstuck
+                Just numberOfItems ->
+                    describeBranch ("I do not see the item hangar in the inventory." ++ numbeROfItems) askForHelpToGetUnstuck
                 
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
