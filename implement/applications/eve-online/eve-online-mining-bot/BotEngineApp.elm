@@ -431,7 +431,9 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
             describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
 
         Just itemHangar ->
-            case numberOfItemsFromInventoryWindow of
+            case inventoryWindowWithItemHangarSelected |> numberOfItemsFromInventoryWindow of
+                Nothing ->
+                    describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
 
                 Just itemString ->
                     describeBranch "Item found." askForHelpToGetUnstuck
