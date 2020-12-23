@@ -56,26 +56,14 @@ import EveOnline.ParseUserInterface
         ( OverviewWindowEntry
         , centerFromDisplayRegion
         , getAllContainedDisplayTexts
+        , UITreeNodeWithDisplayRegion
+        , ChildOfNodeWithDisplayRegion
+        , DisplayRegion
+        , InventoryWindow
         )
 import Regex
 
-type alias UITreeNodeWithDisplayRegion =
-    { uiNode : EveOnline.MemoryReading.UITreeNode
-    , children : Maybe (List ChildOfNodeWithDisplayRegion)
-    , selfDisplayRegion : DisplayRegion
-    , totalDisplayRegion : DisplayRegion
-    }
 
-type ChildOfNodeWithDisplayRegion
-    = ChildWithRegion UITreeNodeWithDisplayRegion
-    | ChildWithoutRegion EveOnline.MemoryReading.UITreeNode
-
-type alias DisplayRegion =
-    { x : Int
-    , y : Int
-    , width : Int
-    , height : Int
-    }
 
 {-| Sources for the defaults:
   - <https://forum.botengine.org/t/mining-bot-wont-approach/3162>
@@ -1676,13 +1664,13 @@ shipManeuverIsApproaching =
         >> Maybe.withDefault False
 
 
-listDescendantsWithDisplayRegion : UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
+listDescendantsWithDisplayRegion : EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
 listDescendantsWithDisplayRegion parent =
     parent
         |> listChildrenWithDisplayRegion
         |> List.concatMap (\child -> child :: listDescendantsWithDisplayRegion child)
 
-listChildrenWithDisplayRegion : UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
+listChildrenWithDisplayRegion : EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
 listChildrenWithDisplayRegion parent =
     parent.children
         |> Maybe.withDefault []
