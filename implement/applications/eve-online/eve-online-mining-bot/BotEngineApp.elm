@@ -57,15 +57,36 @@ import EveOnline.ParseUserInterface
         , centerFromDisplayRegion
         , getAllContainedDisplayTexts
         , UITreeNodeWithDisplayRegion
-        , ChildOfNodeWithDisplayRegion
-        , ChildwithoutRegion
-        , ChildwithRegion
-        , DisplayRegion
-        , InventoryWindow
         )
 import Regex
 
+type alias UITreeNodeWithDisplayRegion =
+    { uiNode : EveOnline.MemoryReading.UITreeNode
+    , children : Maybe (List ChildOfNodeWithDisplayRegion)
+    , selfDisplayRegion : DisplayRegion
+    , totalDisplayRegion : DisplayRegion
+    }
 
+type ChildOfNodeWithDisplayRegion
+    = ChildWithRegion UITreeNodeWithDisplayRegion
+    | ChildWithoutRegion EveOnline.MemoryReading.UITreeNode
+
+type alias DisplayRegion =
+    { x : Int
+    , y : Int
+    , width : Int
+    , height : Int
+    }
+
+type alias InventoryWindow =
+    { buttonToSwitchToListView : Maybe UITreeNodeWithDisplayRegion
+    , uiNode : UITreeNodeWithDisplayRegion
+    , leftTreeEntries : List InventoryWindowLeftTreeEntry
+    , subCaptionLabelText : Maybe String
+    , selectedContainerCapacityGauge : Maybe (Result String InventoryWindowCapacityGauge)
+    , selectedContainerInventory : Maybe Inventory
+    , 
+    }
 
 {-| Sources for the defaults:
   - <https://forum.botengine.org/t/mining-bot-wont-approach/3162>
@@ -1666,13 +1687,13 @@ shipManeuverIsApproaching =
         >> Maybe.withDefault False
 
 
-listDescendantsWithDisplayRegion : EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
+listDescendantsWithDisplayRegion : UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
 listDescendantsWithDisplayRegion parent =
     parent
         |> listChildrenWithDisplayRegion
         |> List.concatMap (\child -> child :: listDescendantsWithDisplayRegion child)
 
-listChildrenWithDisplayRegion : EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
+listChildrenWithDisplayRegion : UITreeNodeWithDisplayRegion -> List UITreeNodeWithDisplayRegion
 listChildrenWithDisplayRegion parent =
     parent.children
         |> Maybe.withDefault []
