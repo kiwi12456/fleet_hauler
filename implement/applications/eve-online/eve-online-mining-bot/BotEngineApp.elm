@@ -408,7 +408,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                         |> getAllContainedDisplayTexts
                         |> List.filter (String.toLower >> String.contains "<color=gray>items")
                         |> List.head
-                        |> Maybe.withDefault String.split " "
+                        |> Maybe.andThen String.split " "
                         |> List.head
             in
             case numberOfInventoryItems of
