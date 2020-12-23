@@ -1618,7 +1618,7 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe String
+numberOfItemsFromInventoryWindow : InventoryWindow -> String
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
@@ -1725,8 +1725,8 @@ getSetTextFromDictEntries =
     getStringPropertyFromDictEntries "_setText"
 
 
-getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode -> Maybe String
+getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode -> String
 getStringPropertyFromDictEntries dictEntryKey uiNode =
     uiNode.dictEntriesOfInterest
         |> Dict.get dictEntryKey
-        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
+        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result)
