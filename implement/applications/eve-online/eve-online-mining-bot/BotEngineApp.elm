@@ -1642,7 +1642,7 @@ numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
-        >> List.head
+        >> List.head.uiNode
         -- >> Maybe.andThen .uiNode
         -- >> getAllContainedDisplayTexts
         -- >> List.head
