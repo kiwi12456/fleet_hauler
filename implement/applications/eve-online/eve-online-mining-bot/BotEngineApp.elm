@@ -431,30 +431,54 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
             describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
 
         Just itemHangar ->
-            case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
+            case numberOfItemsFromInventoryWindow of
                 Nothing ->
                     describeBranch "I see no item in the ore hold. Check if we should undock."
-                        (continueIfShouldHide
-                            { ifShouldHide =
-                                describeBranch "Stay docked." waitForProgressInGame
-                            }
-                            context
-                            |> Maybe.withDefault (undockUsingStationWindow context)
-                        )
+                        (case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
+                            Nothing ->
+                                describeBranch "I see no item in the ore hold. Check if we should undock."
+                                    (continueIfShouldHide
+                                        { ifShouldHide =
+                                            describeBranch "Stay docked." waitForProgressInGame
+                                        }
+                                        context
+                                        |> Maybe.withDefault (undockUsingStationWindow context)
+                                    )
 
-                Just itemInInventory ->
-                    describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
-                        (endDecisionPath
-                            (actWithoutFurtherReadings
-                                ( "Drag and drop."
-                                , EffectOnWindow.effectsForDragAndDrop
-                                    { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                    , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
-                                    , mouseButton = MouseButtonLeft
-                                    }
-                                )
-                            )
+                            Just itemInInventory ->
+                                describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
+                                    (endDecisionPath
+                                        (actWithoutFurtherReadings
+                                            ( "Drag and drop."
+                                            , EffectOnWindow.effectsForDragAndDrop
+                                                { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                                , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
+                                                , mouseButton = MouseButtonLeft
+                                                }
+                                            )
+                                        )
+                                    )
                         )
+                Just numItems ->
+                    case getDisplayText of
+                        Nothing ->
+                            describeBranch "I see no item in the ore hold. Check if we should undock."
+                                (continueIfShouldHide
+                                    { ifShouldHide =
+                                        describeBranch "Stay docked." waitForProgressInGame
+                                    }
+                                    context
+                                    |> Maybe.withDefault (undockUsingStationWindow context)
+                                )
+                        Just numItemsText ->
+                            describeBrance "Text is: " ++ numItemsText
+                                (continueIfShouldHide
+                                    { ifShouldHide =
+                                        describeBranch "Stay docked." waitForProgressInGame
+                                    }
+                                    context
+                                )
+
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
 undockUsingStationWindow context =
