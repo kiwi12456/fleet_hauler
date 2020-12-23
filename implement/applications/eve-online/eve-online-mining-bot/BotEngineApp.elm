@@ -409,7 +409,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                 Nothing ->
                     describeBranch ("I do not see the item hangar in the inventory.") askForHelpToGetUnstuck
                 Just numberOfItems ->
-                    describeBranch ("I do not see the item hangar in the inventory." ++ numbeROfItems) askForHelpToGetUnstuck
+                    describeBranch ("I do not see the item hangar in the inventory." ++ numberOfItems) askForHelpToGetUnstuck
                 
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
