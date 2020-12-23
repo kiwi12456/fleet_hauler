@@ -166,9 +166,9 @@ miningBotDecisionRoot context =
                 { ifDocked =
                     (case context.readingFromGameClient |> inventoryWindowWithItemHangarSelectedFromGameClient of
                         Just inventoryWindow ->
-                            (ensureOreHoldIsSelectedInInventoryWindow
+                            (ensureItemHangarIsSelectedInInventoryWindow
                                 context
-                                (dockedWithOreHoldSelected context)
+                                (dockedWithItemHangarSelected context)
                             )
 
                         Nothing ->
@@ -384,6 +384,38 @@ dockedWithOreHoldSelected context inventoryWindowWithOreHoldSelected =
                             )
                         )
 
+
+dockedWithItemHangarSelected : BotDecisionContext -> EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode
+dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
+    case inventoryWindowWithItemHangarSelected |> itemHangarFromInventoryWindow of
+        Nothing ->
+            describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
+
+        Just itemHangar ->
+            case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
+                Nothing ->
+                    describeBranch "I see no item in the ore hold. Check if we should undock." ++ (selectedContainerAllItemsFromInventoryWindow |> List.length)
+                        (continueIfShouldHide
+                            { ifShouldHide =
+                                describeBranch "Stay docked." waitForProgressInGame
+                            }
+                            context
+                            |> Maybe.withDefault (undockUsingStationWindow context)
+                        )
+
+                Just itemInInventory ->
+                    describeBranch "I see at least one item in the ore hold. Move this to the item hangar." ++ (selectedContainerAllItemsFromInventoryWindow |> List.length)
+                        (endDecisionPath
+                            (actWithoutFurtherReadings
+                                ( "Drag and drop."
+                                , EffectOnWindow.effectsForDragAndDrop
+                                    { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                    , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
+                                    , mouseButton = MouseButtonLeft
+                                    }
+                                )
+                            )
+                        )
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
 undockUsingStationWindow context =
@@ -760,6 +792,69 @@ ensureOreHoldIsSelectedInInventoryWindow context continueWithInventoryWindow =
                                             )
                         )
 
+
+ensureItemHangarIsSelectedInInventoryWindow : BotDecisionContext -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
+ensureItemHangarIsSelectedInInventoryWindow context continueWithInventoryWindow =
+    case context.readingFromGameClient |> inventoryWindowWithItemHangarSelectedFromGameClient of
+        Just inventoryWindow ->
+            continueWithInventoryWindow inventoryWindow
+
+        Nothing ->
+            case context.readingFromGameClient.inventoryWindows |> List.head of
+                Nothing ->
+                    describeBranch "I do not see an inventory window. Opening inventory window."
+                        (endDecisionPath
+                            (actWithoutFurtherReadings
+                                ( "Press the 'W' key and click on the overview entry."
+                                , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_LSHIFT ]
+                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_C ]
+                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_LSHIFT ]
+                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_C ]
+                                ]
+                                    |> List.concat
+                                )
+                            )
+                        )
+                Just inventoryWindow ->
+                    describeBranch
+                        "Item hangar is not selected. Select the item hangar."
+                        (case inventoryWindow |> activeShipTreeEntryFromInventoryWindow of
+                            Nothing ->
+                                describeBranch "I do not see the active ship in the inventory." askForHelpToGetUnstuck
+
+                            Just activeShipTreeEntry ->
+                                let
+                                    maybeItemHangarTreeEntry =
+                                        activeShipTreeEntry.children
+                                            |> List.map EveOnline.ParseUserInterface.unwrapInventoryWindowLeftTreeEntryChild
+                                            |> List.filter (.text >> String.toLower >> String.contains "item hangar")
+                                            |> List.head
+                                in
+                                case maybeItemHangarTreeEntry of
+                                    Nothing ->
+                                        describeBranch "I do not see the item hangar under the active ship in the inventory."
+                                            (case activeShipTreeEntry.toggleBtn of
+                                                Nothing ->
+                                                    describeBranch "I do not see the toggle button to expand the active ship tree entry."
+                                                        askForHelpToGetUnstuck
+
+                                                Just toggleBtn ->
+                                                    endDecisionPath
+                                                        (actWithoutFurtherReadings
+                                                            ( "Click the toggle button to expand."
+                                                            , toggleBtn |> clickOnUIElement MouseButtonLeft
+                                                            )
+                                                        )
+                                            )
+
+                                    Just itemHangarTreeEntry ->
+                                        endDecisionPath
+                                            (actWithoutFurtherReadings
+                                                ( "Click the tree entry representing the item hangar."
+                                                , itemHangarTreeEntry.uiNode |> clickOnUIElement MouseButtonLeft
+                                                )
+                                            )
+                        )
 
 ensureFleetHangarIsSelectedInInventoryWindow : BotDecisionContext -> (EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode) -> DecisionPathNode
 ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow =
