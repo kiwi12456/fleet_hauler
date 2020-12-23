@@ -1729,4 +1729,4 @@ getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode 
 getStringPropertyFromDictEntries dictEntryKey uiNode =
     uiNode.dictEntriesOfInterest
         |> Dict.get dictEntryKey
-        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string)
+        |> Json.Decode.decodeValue Json.Decode.string
