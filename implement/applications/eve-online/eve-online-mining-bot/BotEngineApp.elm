@@ -164,9 +164,20 @@ miningBotDecisionRoot context =
         |> Maybe.withDefault
             (branchDependingOnDockedOrInSpace
                 { ifDocked =
-                    ensureOreHoldIsSelectedInInventoryWindow
-                        context
-                        (dockedWithOreHoldSelected context)
+                    (case context.readingFromGameClient |> inventoryWindowWithItemHangarSelectedFromGameClient of
+                        Just inventoryWindow ->
+                            (ensureOreHoldIsSelectedInInventoryWindow
+                                context
+                                (dockedWithOreHoldSelected context)
+                            )
+
+                        Nothing ->
+                            (ensureOreHoldIsSelectedInInventoryWindow
+                                context
+                                (dockedWithOreHoldSelected context)
+                            )
+                    )
+                    
                 , ifSeeShipUI =
                     returnDronesAndRunAwayIfHitpointsAreTooLow context
                 , ifUndockingComplete =
@@ -1453,6 +1464,12 @@ inventoryWindowWithOreHoldSelectedFromGameClient =
         >> List.filter inventoryWindowSelectedContainerIsOreHold
         >> List.head
 
+inventoryWindowWithItemHangarSelectedFromGameClient : ReadingFromGameClient -> Maybe EveOnline.ParseUserInterface.InventoryWindow
+inventoryWindowWithItemHangarSelectedFromGameClient =
+    .inventoryWindows
+        >> List.filter inventoryWindowSelectedContainerIsItemHangar
+        >> List.head
+
 inventoryWindowWithFleetHangarSelectedFromGameClient : ReadingFromGameClient -> Maybe EveOnline.ParseUserInterface.InventoryWindow
 inventoryWindowWithFleetHangarSelectedFromGameClient =
     .inventoryWindows
@@ -1462,6 +1479,10 @@ inventoryWindowWithFleetHangarSelectedFromGameClient =
 inventoryWindowSelectedContainerIsOreHold : EveOnline.ParseUserInterface.InventoryWindow -> Bool
 inventoryWindowSelectedContainerIsOreHold =
     .subCaptionLabelText >> Maybe.map (String.toLower >> String.contains "ore hold") >> Maybe.withDefault False
+
+inventoryWindowSelectedContainerIsItemHangar : EveOnline.ParseUserInterface.InventoryWindow -> Bool
+inventoryWindowSelectedContainerIsItemHangar =
+    .subCaptionLabelText >> Maybe.map (String.toLower >> String.contains "item hangar") >> Maybe.withDefault False
 
 inventoryWindowSelectedContainerIsFleetHangar : EveOnline.ParseUserInterface.InventoryWindow -> Bool
 inventoryWindowSelectedContainerIsFleetHangar =
@@ -1482,8 +1503,8 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsInInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe (List EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion)
-numberOfItemsInInventoryWindow =
+selectedContainerAllItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe (List EveOnline.ParseUserInterface.UITreeNodeWithDisplayRegion)
+selectedContainerAllItemsFromInventoryWindow =
     .selectedContainerInventory
         >> Maybe.andThen .itemsView
         >> Maybe.map
