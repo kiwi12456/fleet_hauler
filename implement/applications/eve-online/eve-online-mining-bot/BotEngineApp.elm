@@ -401,7 +401,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
         Just itemHangar ->
             let
                 numberOfInventoryItems =
-                    inventoryWindowWithItemHangarSelected
+                    inventoryWindowWithItemHangarSelected.uiNode
                         |> listChildrenWithDisplayRegion
                         |> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map String.toLower >> (==) (Just "numitemslabel"))
                         |> List.head
