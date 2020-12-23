@@ -60,6 +60,7 @@ import EveOnline.ParseUserInterface
         , InventoryWindowLeftTreeEntry
         , InventoryWindowCapacityGauge
         , Inventory
+        , ChildOfNodeWithDisplayRegion
         )
 import Regex
 
