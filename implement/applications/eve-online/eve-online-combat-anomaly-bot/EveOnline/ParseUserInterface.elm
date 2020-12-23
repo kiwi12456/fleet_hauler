@@ -376,6 +376,7 @@ type InventoryItemsView
 type alias InventoryWindowLeftTreeEntry =
     { uiNode : UITreeNodeWithDisplayRegion
     , toggleBtn : Maybe UITreeNodeWithDisplayRegion
+    , selectRegion : Maybe UITreeNodeWithDisplayRegion
     , text : String
     , children : List InventoryWindowLeftTreeEntryChild
     }
@@ -1712,7 +1713,7 @@ parseInventoryWindow windowUiNode =
             rightContainerNode
                 |> Maybe.andThen
                     (listDescendantsWithDisplayRegion
-                        >> List.filter (\uiNode -> [ "ShipCargo", "ShipDroneBay", "ShipOreHold", "StationItems" ] |> List.member uiNode.uiNode.pythonObjectTypeName)
+                        >> List.filter (\uiNode -> [ "ShipCargo", "ShipDroneBay", "ShipOreHold", "StationItems", "ShipFleetHangar", "ShipItemHangar" ] |> List.member uiNode.uiNode.pythonObjectTypeName)
                         >> List.head
                     )
 
@@ -1824,6 +1825,7 @@ parseInventoryWindowTreeViewEntry treeEntryNode =
     in
     { uiNode = treeEntryNode
     , toggleBtn = toggleBtn
+    , selectRegion = topContNode
     , text = text
     , children = children
     }

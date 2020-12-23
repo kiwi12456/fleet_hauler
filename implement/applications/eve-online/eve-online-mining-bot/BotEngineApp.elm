@@ -416,7 +416,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                         if (actualInteger > 100) then
                                             case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                                                 Nothing ->
-                                                    describeBranch ("I see no item in the item hangar. Check if we should undock." ++ actualCount)
+                                                    describeBranch ("I see no item in the item hangar. Select fleet hangar." ++ actualCount)
                                                         (continueIfShouldHide
                                                             { ifShouldHide =
                                                                 describeBranch "Stay docked." waitForProgressInGame
