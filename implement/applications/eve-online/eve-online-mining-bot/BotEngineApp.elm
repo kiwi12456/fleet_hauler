@@ -431,8 +431,12 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
             describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
 
         Just itemHangar ->
-            describeBranch ("Text is: " ++ numberOfItemsFromInventoryWindow)
-                (dockToUnloadOre context)
+            case numberOfItemsFromInventoryWindow of
+                Nothing ->
+                    describeBranch "I do not see the item hangar in the inventory." askForHelpToGetUnstuck
+
+                Just Item ->
+                    describeBranch "Item found." askForHelpToGetUnstuck
                 
 
                 
@@ -1618,7 +1622,7 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : InventoryWindow -> String
+numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe String
 numberOfItemsFromInventoryWindow =
     .uiNode
         >> listDescendantsWithDisplayRegion
@@ -1729,4 +1733,4 @@ getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode 
 getStringPropertyFromDictEntries dictEntryKey uiNode =
     uiNode.dictEntriesOfInterest
         |> Dict.get dictEntryKey
-        |> Json.Decode.decodeValue Json.Decode.string
+        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result)
