@@ -1701,3 +1701,7 @@ menuEntryContainingTextIgnoringCase textToSearch =
         >> List.filter (.text >> String.toLower >> String.contains (textToSearch |> String.toLower))
         >> List.sortBy (.text >> String.trim >> String.length)
         >> List.head
+
+lastContextMenuOrSubmenu : ParsedUserInterface -> Maybe EveOnline.MemoryReading.ContextMenu
+lastContextMenuOrSubmenu =
+    .contextMenus >> List.head
