@@ -61,6 +61,7 @@ import EveOnline.ParseUserInterface
         , InventoryWindowCapacityGauge
         , Inventory
         , listDescendantsWithDisplayRegion
+        , listChildrenWithDisplayRegion
         )
 import Regex
 
@@ -400,9 +401,9 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
         Just itemHangar ->
             let
                 numberOfInventoryItems =
-                    inventoryWindowWithItemHangarSelected.uiNode.uiNode
-                        |> getAllContainedDisplayTexts
-                        |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "numItemsLabel")
+                    inventoryWindowWithItemHangarSelected
+                        |> listChildrenWithDisplayRegion
+                        |> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map String.toLower >> (==) (Just "numitemslabel"))
                         |> List.head
             in
             case numberOfInventoryItems of
