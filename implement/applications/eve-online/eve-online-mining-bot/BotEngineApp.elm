@@ -1734,7 +1734,7 @@ getAllContainedDisplayTexts uiNode =
         :: (uiNode |> EveOnline.MemoryReading.listDescendantsInUITreeNode)
         |> Maybe.andThen List.filterMap getDisplayText
 
-getDisplayText : EveOnline.MemoryReading.UITreeNode -> Maybe String
+getDisplayText : EveOnline.MemoryReading.UITreeNode -> Maybe (List String)
 getDisplayText uiNode =
     [ "_setText", "_text" ]
         |> List.filterMap
