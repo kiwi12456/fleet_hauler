@@ -1729,8 +1729,8 @@ getSetTextFromDictEntries =
     getStringPropertyFromDictEntries "_setText"
 
 
-getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode -> String
+getStringPropertyFromDictEntries : String -> EveOnline.MemoryReading.UITreeNode -> Maybe String
 getStringPropertyFromDictEntries dictEntryKey uiNode =
     uiNode.dictEntriesOfInterest
         |> Dict.get dictEntryKey
-        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result)
+        |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
