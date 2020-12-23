@@ -90,7 +90,7 @@ type alias DisplayRegion =
 
 type alias InventoryWindow =
     { buttonToSwitchToListView : Maybe UITreeNodeWithDisplayRegion
-    , leftTreeEntries : List EveOnline.ParseUserInterface.InventoryWindowLeftTreeEntry
+    , leftTreeEntries : UITreeNodeWithDisplayRegion
     , selectedContainerCapacityGauge : Maybe (Result String EveOnline.ParseUserInterface.InventoryWindowCapacityGauge)
     , selectedContainerInventory : Maybe EveOnline.ParseUserInterface.Inventory
     , subCaptionLabelText : Maybe String
