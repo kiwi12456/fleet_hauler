@@ -402,7 +402,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                 numberOfInventoryItems =
                     inventoryWindowWithItemHangarSelected.uiNode.uiNode
                         |> getAllContainedDisplayTexts
-                        |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "Inventory")
+                        |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "numItemsLabel")
                         |> List.head
             in
             case numberOfInventoryItems of
