@@ -1733,3 +1733,15 @@ getAllContainedDisplayTexts uiNode =
     uiNode
         :: (uiNode |> EveOnline.MemoryReading.listDescendantsInUITreeNode)
         |> List.filterMap getDisplayText
+
+getDisplayText : EveOnline.MemoryReading.UITreeNode -> Maybe String
+getDisplayText uiNode =
+    [ "_setText", "_text" ]
+        |> List.filterMap
+            (\displayTextPropertyName ->
+                uiNode.dictEntriesOfInterest
+                    |> Dict.get displayTextPropertyName
+                    |> Maybe.andThen (Json.Decode.decodeValue Json.Decode.string >> Result.toMaybe)
+            )
+        |> List.sortBy (String.length >> negate)
+        |> List.head
