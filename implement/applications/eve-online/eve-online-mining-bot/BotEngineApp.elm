@@ -406,7 +406,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                     --     |> List.filter (.uiNode >> EveOnline.ParseUserInterface.getAllContainedDisplayTexts >> List.any (String.toLower >> String.contains "items"))
                     inventoryWindowWithItemHangarSelected.uiNode.uiNode
                         |> getAllContainedDisplayTexts
-                        |> List.any (String.toLower >> String.contains "items")
+                        |> List.filter (String.toLower >> String.contains "items")
                         |> List.head
             in
             case numberOfInventoryItems of
