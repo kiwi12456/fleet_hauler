@@ -422,7 +422,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                     Nothing ->
                                         describeBranch ("No integer found.") askForHelpToGetUnstuck
                                     Just actualInteger ->
-                                        if (actualInteger > 2) then
+                                        if (actualInteger > 100) then
                                             case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                                                 Nothing ->
                                                     describeBranch "I see no item in the item hangar. Check if we should undock."
