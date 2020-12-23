@@ -402,8 +402,8 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
         Just itemHangar ->
             let
                 numberOfInventoryItems =
-                    inventoryWindowWithItemHangarSelected
-                        |> List.filter (.uiNode >> .uiNode >> EveOnline.ParseUserInterface.getAllContainedDisplayTexts >> List.any (String.toLower >> String.contains "items"))
+                    inventoryWindowWithItemHangarSelected.uiNode
+                        |> List.filter (.uiNode >> EveOnline.ParseUserInterface.getAllContainedDisplayTexts >> List.any (String.toLower >> String.contains "items"))
             in
             case numberOfInventoryItems of
                 Nothing ->
