@@ -402,12 +402,12 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                 numberOfInventoryItems =
                     inventoryWindowWithItemHangarSelected.uiNode.uiNode
                         |> getAllContainedDisplayTexts
-                        |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "Items")
+                        |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "Inventory")
                         |> List.head
             in
             case numberOfInventoryItems of
                 Nothing ->
-                    describeBranch ("I do not see the item hangar in the inventory.") askForHelpToGetUnstuck
+                    describeBranch ("Cannot find search string.") askForHelpToGetUnstuck
                 Just numberOfItems ->
                     describeBranch ("I do not see the item hangar in the inventory." ++ numberOfItems) askForHelpToGetUnstuck
                 
