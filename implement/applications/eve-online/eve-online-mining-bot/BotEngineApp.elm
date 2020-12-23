@@ -90,11 +90,11 @@ type alias DisplayRegion =
 
 type alias InventoryWindow =
     { buttonToSwitchToListView : Maybe UITreeNodeWithDisplayRegion
-    , uiNode : UITreeNodeWithDisplayRegion
     , leftTreeEntries : List EveOnline.ParseUserInterface.InventoryWindowLeftTreeEntry
-    , subCaptionLabelText : Maybe String
     , selectedContainerCapacityGauge : Maybe (Result String EveOnline.ParseUserInterface.InventoryWindowCapacityGauge)
     , selectedContainerInventory : Maybe EveOnline.ParseUserInterface.Inventory
+    , subCaptionLabelText : Maybe String
+    , uiNode : UITreeNodeWithDisplayRegion
     }
 
 {-| Sources for the defaults:
@@ -1631,7 +1631,7 @@ numberOfItemsFromInventoryWindow =
         >> Maybe.map .uiNode
         >> Maybe.andThen getSetTextFromDictEntries
 
-itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
+itemHangarFromInventoryWindow : InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
     .leftTreeEntries
         >> List.filter (.text >> String.toLower >> String.contains "item hangar")
