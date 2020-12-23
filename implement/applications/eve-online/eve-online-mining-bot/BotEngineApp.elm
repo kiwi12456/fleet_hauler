@@ -63,40 +63,6 @@ import EveOnline.ParseUserInterface
         )
 import Regex
 
-type alias UITreeNodeWithDisplayRegion =
-    { uiNode : EveOnline.MemoryReading.UITreeNode
-    , children : Maybe (List ChildOfNodeWithDisplayRegion)
-    , selfDisplayRegion : DisplayRegion
-    , totalDisplayRegion : DisplayRegion
-    }
-
-type alias UITreeNodeWithDisplayRegion2 =
-    { children : Maybe (List ChildOfNodeWithDisplayRegion)
-    , selfDisplayRegion : DisplayRegion
-    , totalDisplayRegion : { height : Int, width : Int, x: Int, y: Int}
-    , uiNode : EveOnline.MemoryReading.UITreeNode
-    }
-
-type ChildOfNodeWithDisplayRegion
-    = ChildWithRegion UITreeNodeWithDisplayRegion
-    | ChildWithoutRegion EveOnline.MemoryReading.UITreeNode
-
-type alias DisplayRegion =
-    { x : Int
-    , y : Int
-    , width : Int
-    , height : Int
-    }
-
-type alias InventoryWindow =
-    { buttonToSwitchToListView : Maybe UITreeNodeWithDisplayRegion
-    , leftTreeEntries : UITreeNodeWithDisplayRegion
-    , selectedContainerCapacityGauge : Maybe (Result String EveOnline.ParseUserInterface.InventoryWindowCapacityGauge)
-    , selectedContainerInventory : Maybe EveOnline.ParseUserInterface.Inventory
-    , subCaptionLabelText : Maybe String
-    , uiNode : UITreeNodeWithDisplayRegion
-    }
-
 {-| Sources for the defaults:
   - <https://forum.botengine.org/t/mining-bot-wont-approach/3162>
 -}
@@ -1622,7 +1588,7 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : InventoryWindow -> Maybe String
+numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe String
 numberOfItemsFromInventoryWindow =
     .leftTreeEntries
         >> listDescendantsWithDisplayRegion
