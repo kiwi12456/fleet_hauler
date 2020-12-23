@@ -394,7 +394,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
         Just itemHangar ->
             case inventoryWindowWithItemHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                 Nothing ->
-                    describeBranch "I see no item in the ore hold. Check if we should undock." ++ selectedContainerAllItemsFromInventoryWindow
+                    describeBranch "I see no item in the ore hold. Check if we should undock."
                         (continueIfShouldHide
                             { ifShouldHide =
                                 describeBranch "Stay docked." waitForProgressInGame
@@ -404,7 +404,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                         )
 
                 Just itemInInventory ->
-                    describeBranch "I see at least one item in the ore hold. Move this to the item hangar." ++ selectedContainerAllItemsFromInventoryWindow
+                    describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
                         (endDecisionPath
                             (actWithoutFurtherReadings
                                 ( "Drag and drop."
@@ -1612,7 +1612,7 @@ selectedContainerAllItemsFromInventoryWindow =
                     EveOnline.ParseUserInterface.InventoryItemsNotListView { items } ->
                         items
             )
-        >> Maybe.andThen List.length
+        >> List.length
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
