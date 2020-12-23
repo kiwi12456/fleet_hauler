@@ -1694,3 +1694,10 @@ shipManeuverIsApproaching =
         >> Maybe.map ((==) EveOnline.ParseUserInterface.ManeuverApproach)
         -- If the ship is just floating in space, there might be no indication displayed.
         >> Maybe.withDefault False
+
+menuEntryContainingTextIgnoringCase : String -> EveOnline.MemoryReading.ContextMenu -> Maybe EveOnline.MemoryReading.ContextMenuEntry
+menuEntryContainingTextIgnoringCase textToSearch =
+    .entries
+        >> List.filter (.text >> String.toLower >> String.contains (textToSearch |> String.toLower))
+        >> List.sortBy (.text >> String.trim >> String.length)
+        >> List.head
