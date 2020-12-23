@@ -400,7 +400,7 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
         Just itemHangar ->
             let
                 numberOfInventoryItems =
-                    inventoryWindowWithItemHangarSelected.uiNode.uiNode.uiNode
+                    inventoryWindowWithItemHangarSelected.uiNode.uiNode
                         |> getAllContainedDisplayTexts
                         |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "<color=gray>Items")
                         |> List.head
@@ -1589,13 +1589,13 @@ selectedContainerFirstItemFromInventoryWindow =
             )
         >> Maybe.andThen List.head
 
-numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe String
-numberOfItemsFromInventoryWindow  =
-    listDescendantsWithDisplayRegion
-        >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
-        >> List.head
-        >> Maybe.map .uiNode
-        >> Maybe.andThen getSetTextFromDictEntries
+-- numberOfItemsFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe String
+-- numberOfItemsFromInventoryWindow  =
+--     listDescendantsWithDisplayRegion
+--         >> List.filter (.uiNode >> getNameFromDictEntries >> Maybe.map ((==) "numItemsLabel") >> Maybe.withDefault False)
+--         >> List.head
+--         >> Maybe.map .uiNode
+--         >> Maybe.andThen getSetTextFromDictEntries
 
 itemHangarFromInventoryWindow : EveOnline.ParseUserInterface.InventoryWindow -> Maybe UIElement
 itemHangarFromInventoryWindow =
