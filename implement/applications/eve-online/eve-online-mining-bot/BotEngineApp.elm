@@ -432,12 +432,12 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
 
         Just itemHangar ->
             case numberOfItemsFromInventoryWindow of
-               Just numItemText ->
+                Nothing ->
+                    describeBranch "No Text Found" askForHelpToGetUnstuck
+                Just numItemText ->
                     describeBranch ("Text is: " ++ numItemText)
                         (dockToUnloadOre context)
-                Nothing ->
-                    describeBranch ("No Text Found")
-                        (dockToUnloadOre context)
+                
 
                 
 
