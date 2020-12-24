@@ -434,7 +434,11 @@ dockedWithItemHangarSelected context inventoryWindowWithItemHangarSelected =
                                                         )
                                                 
                                         else
-                                            describeBranch ("Don't stack") askForHelpToGetUnstuck
+                                            describeBranch ("Stacking not required. Switch to Ore Hold.")
+                                                (ensureOreHoldIsSelectedInInventoryWindow
+                                                    context
+                                                    (dockedWithOreHoldSelected context)
+                                                )
 
 undockUsingStationWindow : BotDecisionContext -> DecisionPathNode
 undockUsingStationWindow context =
