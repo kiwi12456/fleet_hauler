@@ -556,57 +556,57 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                     describeThresholdToUnload =
                         (1 |> String.fromInt) ++ "%"
                 in
-                if 1 <= fillPercent then
-                    describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
-                        (case inventoryWindowWithFleetHangarSelected |> fleetHangarFromInventoryWindow of
+                case inventoryWindowWithFleetHangarSelected |> fleetHangarFromInventoryWindow of
+                    Nothing ->
+                        describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
+
+                    Just fleetHangar ->
+                        (case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
                             Nothing ->
-                                describeBranch "I do not see the fleet hangar in the inventory." askForHelpToGetUnstuck
+                                describeBranch "I see no fleet commander. Warp to fleet commander."
+                                    (warpToWatchlistEntry context)
 
-                            Just fleetHangar ->
-                                case inventoryWindowWithFleetHangarSelected |> oreHoldFromInventoryWindow of
-                                    Nothing ->
-                                        describeBranch "I do not see the ore hold in the inventory." askForHelpToGetUnstuck
-
-                                    Just oreHold ->
-                                        case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
+                            Just fleetCommanderInOverview ->
+                                if 1 <= fillPercent then
+                                    describeBranch ("The fleet hangar is filled at least " ++ describeThresholdToUnload ++ ". Move to ore hold.")
+                                        (case inventoryWindowWithFleetHangarSelected |> oreHoldFromInventoryWindow of
                                             Nothing ->
-                                                describeBranch "I see no item in the fleet hangar. Continue to mine ore."
-                                                    (case context.readingFromGameClient.targets |> List.head of
-                                                        Nothing ->
-                                                            describeBranch "I see no locked target."
-                                                                (travelToMiningSiteAndLaunchDronesAndTargetAsteroid context)
+                                                describeBranch "I do not see the ore hold in the inventory." askForHelpToGetUnstuck
 
-                                                        Just _ ->
-                                                            {- Depending on the UI configuration, the game client might automatically target rats.
-                                                            To avoid these targets interfering with mining, unlock them here.
-                                                            -}
-                                                            unlockTargetsNotForMining context
-                                                                |> Maybe.withDefault
-                                                                    (describeBranch "I see a locked target."
-                                                                        (case context |> knownMiningModules |> List.filter (.isActive >> Maybe.withDefault False >> not) |> List.head of
-                                                                            Nothing ->
-                                                                                describeBranch "All known mining modules are active."
-                                                                                    (readShipUIModuleButtonTooltips context
-                                                                                        |> Maybe.withDefault
-                                                                                            (launchDronesAndSendThemToMine context.readingFromGameClient
-                                                                                                |> Maybe.withDefault waitForProgressInGame
-                                                                                            )
-                                                                                    )
-
-                                                                            Just inactiveModule ->
-                                                                                describeBranch "I see an inactive mining module. Activate it."
-                                                                                    (clickModuleButtonButWaitIfClickedInPreviousStep context inactiveModule)
-                                                                        )
-                                                                    )
-                                                    )
-
-                                            Just itemInInventory ->
-                                                case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
+                                            Just oreHold ->
+                                                case inventoryWindowWithFleetHangarSelected |> selectedContainerFirstItemFromInventoryWindow of
                                                     Nothing ->
-                                                        describeBranch "I see no fleet commander. Warp to fleet commander."
-                                                            (warpToWatchlistEntry context)
+                                                        describeBranch "I see no item in the fleet hangar. Continue to mine ore."
+                                                            (case context.readingFromGameClient.targets |> List.head of
+                                                                Nothing ->
+                                                                    describeBranch "I see no locked target."
+                                                                        (travelToMiningSiteAndLaunchDronesAndTargetAsteroid context)
 
-                                                    Just fleetCommanderInOverview ->
+                                                                Just _ ->
+                                                                    {- Depending on the UI configuration, the game client might automatically target rats.
+                                                                    To avoid these targets interfering with mining, unlock them here.
+                                                                    -}
+                                                                    unlockTargetsNotForMining context
+                                                                        |> Maybe.withDefault
+                                                                            (describeBranch "I see a locked target."
+                                                                                (case context |> knownMiningModules |> List.filter (.isActive >> Maybe.withDefault False >> not) |> List.head of
+                                                                                    Nothing ->
+                                                                                        describeBranch "All known mining modules are active."
+                                                                                            (readShipUIModuleButtonTooltips context
+                                                                                                |> Maybe.withDefault
+                                                                                                    (launchDronesAndSendThemToMine context.readingFromGameClient
+                                                                                                        |> Maybe.withDefault waitForProgressInGame
+                                                                                                    )
+                                                                                            )
+
+                                                                                    Just inactiveModule ->
+                                                                                        describeBranch "I see an inactive mining module. Activate it."
+                                                                                            (clickModuleButtonButWaitIfClickedInPreviousStep context inactiveModule)
+                                                                                )
+                                                                            )
+                                                            )
+
+                                                    Just itemInInventory ->
                                                         describeBranch "I see at least one item in the fleet hangar. Approach fleet commander and move item to the ore hold."
                                                             (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
                                                                 |> Maybe.withDefault
@@ -622,39 +622,28 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                         )
                                                                     )
                                                             ) 
-
-                                                    -- Just fleetCommanderInOverview ->
-                                                    --     describeBranch "I see at least one item in the fleet hangar. Approach fleet commander and move item to the ore hold."
-                                                    --         (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
-                                                    --             |> Maybe.withDefault
-                                                    --                 (endDecisionPath
-                                                    --                     (actWithoutFurtherReadings
-                                                    --                         ( "Drag and drop."
-                                                    --                         , EffectOnWindow.effectsForDragAndDrop
-                                                    --                             { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                                    --                             , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
-                                                    --                             , mouseButton = MouseButtonLeft
-                                                    --                             }
-                                                    --                         )
-                                                    --                     )
-                                                    --                 )
-                                                    --         ) 
-                        )
-
-                else
-                    describeBranch ("The fleet hangar is not yet filled. Wait.")
-                        (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
-                            |> Maybe.withDefault
-                                (endDecisionPath
-                                    (actWithoutFurtherReadings
-                                        ( "Click at scroll control bottom"
-                                        , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
-                                            , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
-                                            ]
                                         )
-                                    )
-                                )
+
+                                else
+                                    describeBranch ("The fleet hangar is not yet filled. Wait.")
+                                        (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                                            |> Maybe.withDefault
+                                                (endDecisionPath
+                                                    (actWithoutFurtherReadings
+                                                        ( "Click at scroll control bottom"
+                                                        , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
+                                                            , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
+                                                            ]
+                                                        )
+                                                    )
+                                                )
+                                        )
+
+
                         )
+
+
+                        
                         
 
 unlockTargetsNotForMining : BotDecisionContext -> Maybe DecisionPathNode
