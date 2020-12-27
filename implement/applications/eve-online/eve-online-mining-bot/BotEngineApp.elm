@@ -643,15 +643,19 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
 
                 else
                     describeBranch ("The fleet hangar is not yet filled. Wait.")
-                        (endDecisionPath
-                            (actWithoutFurtherReadings
-                                ( "Click at scroll control bottom"
-                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
-                                    , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
-                                    ]
+                        (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                            |> Maybe.withDefault
+                                (endDecisionPath
+                                    (actWithoutFurtherReadings
+                                        ( "Click at scroll control bottom"
+                                        , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
+                                            , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
+                                            ]
+                                        )
+                                    )
                                 )
-                            )
                         )
+                        
 
 unlockTargetsNotForMining : BotDecisionContext -> Maybe DecisionPathNode
 unlockTargetsNotForMining context =
