@@ -754,15 +754,14 @@ ensureOreHoldIsSelectedInInventoryWindow context continueWithInventoryWindow =
         Nothing ->
             case context.readingFromGameClient.inventoryWindows |> List.head of
                 Nothing ->
-                    describeBranch "I do not see an inventory window. Opening inventory window."
-                        (endDecisionPath
-                            (actWithoutFurtherReadings
-                                ( "Press the 'W' key and click on the overview entry."
-                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
-                                ]
-                                    |> List.concat
-                                )
+                    -- describeBranch "I do not see an inventory window. Opening inventory window."
+                    endDecisionPath
+                        (actWithoutFurtherReadings
+                            ( "I do not see an inventory window. Opening inventory window."
+                            , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
+                            , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
+                            ]
+                                |> List.concat
                             )
                         )
                 Just inventoryWindow ->
@@ -816,15 +815,14 @@ ensureItemHangarIsSelectedInInventoryWindow context continueWithInventoryWindow 
         Nothing ->
             case context.readingFromGameClient.inventoryWindows |> List.head of
                 Nothing ->
-                    describeBranch "I do not see an inventory window. Opening inventory window."
-                        (endDecisionPath
-                            (actWithoutFurtherReadings
-                                ( "Press the 'W' key and click on the overview entry."
-                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
-                                ]
-                                    |> List.concat
-                                )
+                    -- describeBranch "I do not see an inventory window. Opening inventory window."
+                    endDecisionPath
+                        (actWithoutFurtherReadings
+                            ( "I do not see an inventory window. Opening inventory window."
+                            , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
+                            , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
+                            ]
+                                |> List.concat
                             )
                         )
                 Just inventoryWindow ->
@@ -878,15 +876,14 @@ ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow
         Nothing ->
             case context.readingFromGameClient.inventoryWindows |> List.head of
                 Nothing ->
-                    describeBranch "I do not see an inventory window. Please open an inventory window."
-                        (endDecisionPath
-                            (actWithoutFurtherReadings
-                                ( "Press the 'W' key and click on the overview entry."
-                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
-                                ]
-                                    |> List.concat
-                                )
+                    -- describeBranch "I do not see an inventory window. Opening inventory window."
+                    endDecisionPath
+                        (actWithoutFurtherReadings
+                            ( "I do not see an inventory window. Opening inventory window."
+                            , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
+                            , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
+                            ]
+                                |> List.concat
                             )
                         )
 
