@@ -758,10 +758,8 @@ ensureOreHoldIsSelectedInInventoryWindow context continueWithInventoryWindow =
                         (endDecisionPath
                             (actWithoutFurtherReadings
                                 ( "Press the 'W' key and click on the overview entry."
-                                , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_LSHIFT ]
-                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_C ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_LSHIFT ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_C ]
+                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
+                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
                                 ]
                                     |> List.concat
                                 )
@@ -822,10 +820,8 @@ ensureItemHangarIsSelectedInInventoryWindow context continueWithInventoryWindow 
                         (endDecisionPath
                             (actWithoutFurtherReadings
                                 ( "Press the 'W' key and click on the overview entry."
-                                , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_LSHIFT ]
-                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_C ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_LSHIFT ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_C ]
+                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
+                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
                                 ]
                                     |> List.concat
                                 )
@@ -886,10 +882,8 @@ ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow
                         (endDecisionPath
                             (actWithoutFurtherReadings
                                 ( "Press the 'W' key and click on the overview entry."
-                                , [ [ EffectOnWindow.KeyDown EffectOnWindow.vkey_LSHIFT ]
-                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_C ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_LSHIFT ]
-                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_C ]
+                                , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_I ]
+                                , [ EffectOnWindow.KeyUp EffectOnWindow.vkey_I ]
                                 ]
                                     |> List.concat
                                 )
