@@ -371,18 +371,34 @@ dockedWithOreHoldSelected context inventoryWindowWithOreHoldSelected =
                         )
 
                 Just itemInInventory ->
-                    describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
-                        (endDecisionPath
-                            (actWithoutFurtherReadings
-                                ( "Drag and drop."
-                                , EffectOnWindow.effectsForDragAndDrop
-                                    { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                    , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
-                                    , mouseButton = MouseButtonLeft
-                                    }
+                    let
+                        allItemsSelected =
+                            inventoryWindowWithOreHoldSelected.uiNode.uiNode
+                                |> getAllContainedDisplayTexts
+                                |> List.filter (String.toLower >> String.contains "/")
+                                |> List.head
+                    in
+                    case allItemsSelected of
+                        Nothing ->
+                            describeBranch "Select all ore items to drag into item hangar"
+                                (useContextMenuCascade
+                                    ( "Item Hangar", itemInInventory )
+                                        (useMenuEntryWithTextContaining "Select All" menuCascadeCompleted)
+                                    context.readingFromGameClient
                                 )
-                            )
-                        )
+                        Just allItems ->
+                            describeBranch "I see at least one item in the ore hold. Move this to the item hangar."
+                                (endDecisionPath
+                                    (actWithoutFurtherReadings
+                                        ( "Drag and drop."
+                                        , EffectOnWindow.effectsForDragAndDrop
+                                            { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                            , endLocation = itemHangar.totalDisplayRegion |> centerFromDisplayRegion
+                                            , mouseButton = MouseButtonLeft
+                                            }
+                                        )
+                                    )
+                                )
 
 
 dockedWithItemHangarSelected : BotDecisionContext -> EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode
@@ -607,21 +623,37 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                             )
 
                                                     Just itemInInventory ->
-                                                        describeBranch "I see at least one item in the fleet hangar. Approach fleet commander and move item to the ore hold."
-                                                            (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
-                                                                |> Maybe.withDefault
-                                                                    (endDecisionPath
-                                                                        (actWithoutFurtherReadings
-                                                                            ( "Drag and drop."
-                                                                            , EffectOnWindow.effectsForDragAndDrop
-                                                                                { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
-                                                                                , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
-                                                                                , mouseButton = MouseButtonLeft
-                                                                                }
-                                                                            )
-                                                                        )
+                                                        let
+                                                            allItemsSelected =
+                                                                inventoryWindowWithFleetHangarSelected.uiNode.uiNode
+                                                                    |> getAllContainedDisplayTexts
+                                                                    |> List.filter (String.toLower >> String.contains "/")
+                                                                    |> List.head
+                                                        in
+                                                        case allItemsSelected of
+                                                            Nothing ->
+                                                                describeBranch "Select all ore items to drag into ore hold."
+                                                                    (useContextMenuCascade
+                                                                        ( "Fleet Hangar", itemInInventory )
+                                                                            (useMenuEntryWithTextContaining "Select All" menuCascadeCompleted)
+                                                                        context.readingFromGameClient
                                                                     )
-                                                            ) 
+                                                            Just allItems ->
+                                                                describeBranch "I see at least one item in the fleet hangar. Approach fleet commander and move item to the ore hold."
+                                                                    (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                                                                        |> Maybe.withDefault
+                                                                            (endDecisionPath
+                                                                                (actWithoutFurtherReadings
+                                                                                    ( "Drag and drop."
+                                                                                    , EffectOnWindow.effectsForDragAndDrop
+                                                                                        { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
+                                                                                        , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
+                                                                                        , mouseButton = MouseButtonLeft
+                                                                                        }
+                                                                                    )
+                                                                                )
+                                                                            )
+                                                                    ) 
                                         )
 
                                 else
