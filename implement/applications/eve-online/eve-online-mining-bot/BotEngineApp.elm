@@ -1002,23 +1002,23 @@ lockTargetFromOverviewEntry overviewEntry readingFromGameClient =
 
 dockToStationOrStructureWithMatchingName :
     { prioritizeStructures : Bool, nameFromSettingOrInfoPanel : String }
-    -> ReadingFromGameClient
+    -> BotDecisionContext
     -> DecisionPathNode
-dockToStationOrStructureWithMatchingName { prioritizeStructures, nameFromSettingOrInfoPanel } readingFromGameClient =
+dockToStationOrStructureWithMatchingName { prioritizeStructures, nameFromSettingOrInfoPanel } context =
     let
         displayTextRepresentsMatchingStation =
             simplifyStationOrStructureNameFromSettingsBeforeComparingToMenuEntry
                 >> String.startsWith (nameFromSettingOrInfoPanel |> simplifyStationOrStructureNameFromSettingsBeforeComparingToMenuEntry)
 
         matchingOverviewEntry =
-            readingFromGameClient.overviewWindow
+            context.readingFromGameClient.overviewWindow
                 |> Maybe.map .entries
                 |> Maybe.withDefault []
                 |> List.filter (.objectName >> Maybe.map displayTextRepresentsMatchingStation >> Maybe.withDefault False)
                 |> List.head
 
         overviewWindowScrollControls =
-            readingFromGameClient.overviewWindow
+            context.readingFromGameClient.overviewWindow
                 |> Maybe.andThen .scrollControls
     in
     matchingOverviewEntry
@@ -1030,20 +1030,21 @@ dockToStationOrStructureWithMatchingName { prioritizeStructures, nameFromSetting
                     readingFromGameClient
             )
         |> Maybe.withDefault
-            (overviewWindowScrollControls
-                |> Maybe.andThen scrollDown
-                |> Maybe.withDefault
-                    (describeBranch "I do not see the station in the overview window. I use the menu from the surroundings button."
-                        (dockToStationOrStructureUsingSurroundingsButtonMenu
-                            { prioritizeStructures = prioritizeStructures
-                            , describeChoice = "representing the station or structure '" ++ nameFromSettingOrInfoPanel ++ "'."
-                            , chooseEntry =
-                                List.filter (.text >> displayTextRepresentsMatchingStation) >> List.head
-                            }
-                            readingFromGameClient
-                        )
-                    )
-            )
+            (warpToRefineryStructure context)
+            -- (overviewWindowScrollControls
+            --     |> Maybe.andThen scrollDown
+            --     |> Maybe.withDefault
+            --         (describeBranch "I do not see the station in the overview window. I use the menu from the surroundings button."
+            --             (dockToStationOrStructureUsingSurroundingsButtonMenu
+            --                 { prioritizeStructures = prioritizeStructures
+            --                 , describeChoice = "representing the station or structure '" ++ nameFromSettingOrInfoPanel ++ "'."
+            --                 , chooseEntry =
+            --                     List.filter (.text >> displayTextRepresentsMatchingStation) >> List.head
+            --                 }
+            --                 readingFromGameClient
+            --             )
+            --         )
+            -- )
 
 
 scrollDown : EveOnline.ParseUserInterface.ScrollControls -> Maybe DecisionPathNode
@@ -1136,6 +1137,21 @@ warpToWatchlistEntry context =
             describeBranch "I see no entry in the watchlist panel. Warping directly to mining site."
                 (warpToMiningSite context.readingFromGameClient)
 
+warpToRefineryStructure : BotDecisionContext -> DecisionPathNode
+warpToRefineryStructure context =
+    case context.readingFromGameClient.groupWindow |> Maybe.andThen (.entries >> List.head) of
+        Just groupEntry ->
+            describeBranch "Warp to refinery structure in group window."
+                (useContextMenuCascade
+                    ( "Group entry", groupEntry )
+                    (useMenuEntryWithTextContaining "Jump through stargate" menuCascadeCompleted)
+                    context.readingFromGameClient
+                )
+
+        Nothing ->
+            describeBranch "I see no entry in the group window. Warping directly to mining site."
+                (warpToMiningSite context.readingFromGameClient)
+
 approachWatchlistEntry : BotDecisionContext -> DecisionPathNode
 approachWatchlistEntry context =
     case context.readingFromGameClient.watchListPanel |> Maybe.andThen (.entries >> List.head) of
@@ -1173,14 +1189,14 @@ dockToUnloadOre context =
         Just unloadStationName ->
             dockToStationOrStructureWithMatchingName
                 { prioritizeStructures = False, nameFromSettingOrInfoPanel = unloadStationName }
-                context.readingFromGameClient
+                context
 
         Nothing ->
             case context.eventContext.appSettings.unloadStructureName of
                 Just unloadStructureName ->
                     dockToStationOrStructureWithMatchingName
                         { prioritizeStructures = True, nameFromSettingOrInfoPanel = unloadStructureName }
-                        context.readingFromGameClient
+                        context
 
                 Nothing ->
                     describeBranch "At which station should I dock?. I was never docked in a station in this session." askForHelpToGetUnstuck

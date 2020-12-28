@@ -32,6 +32,7 @@ type alias ParsedUserInterface =
     , characterSheetWindow : Maybe CharacterSheetWindow
     , fleetWindow : Maybe FleetWindow
     , watchListPanel : Maybe WatchListPanel
+    , groupWindow: Maybe GroupWindow
     , moduleButtonTooltip : Maybe ModuleButtonTooltip
     , neocom : Maybe Neocom
     , messageBoxes : List MessageBox
@@ -488,6 +489,11 @@ type alias WatchListPanel =
     , entries : List UITreeNodeWithDisplayRegion
     }
 
+type alias GroupWindow =
+    { uiNode : UITreeNodeWithDisplayRegion
+    , entries : List UITreeNodeWithDisplayRegion
+    }
+
 
 parseUITreeWithDisplayRegionFromUITree : EveOnline.MemoryReading.UITreeNode -> UITreeNodeWithDisplayRegion
 parseUITreeWithDisplayRegionFromUITree uiTree =
@@ -527,6 +533,7 @@ parseUserInterfaceFromUITree uiTree =
     , characterSheetWindow = parseCharacterSheetWindowFromUITreeRoot uiTree
     , fleetWindow = parseFleetWindowFromUITreeRoot uiTree
     , watchListPanel = parseWatchListPanelFromUITreeRoot uiTree
+    , groupWindow = parseGroupWindowFromUITreeRoot uiTree
     , neocom = parseNeocomFromUITreeRoot uiTree
     , messageBoxes = parseMessageBoxesFromUITreeRoot uiTree
     , hybridWindows = parseHybridWindowsFromUITreeRoot uiTree
@@ -2280,6 +2287,27 @@ parseWatchListPanel windowUINode =
             windowUINode
                 |> listDescendantsWithDisplayRegion
                 |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "WatchListEntry")
+    in
+    { uiNode = windowUINode
+    , entries = entries
+    }
+
+parseGroupWindowFromUITreeRoot : UITreeNodeWithDisplayRegion -> Maybe GroupWindow
+parseGroupWindowFromUITreeRoot uiTreeRoot =
+    uiTreeRoot
+        |> listDescendantsWithDisplayRegion
+        |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "VirtualGroupWindow")
+        |> List.head
+        |> Maybe.map parseGroupWindow
+
+
+parseGroupWindow : UITreeNodeWithDisplayRegion -> GroupWindow
+parseGroupWindow windowUINode =
+    let
+        entries =
+            windowUINode
+                |> listDescendantsWithDisplayRegion
+                |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "PlaceEntry")
     in
     { uiNode = windowUINode
     , entries = entries
