@@ -1027,7 +1027,7 @@ dockToStationOrStructureWithMatchingName { prioritizeStructures, nameFromSetting
                 EveOnline.AppFramework.useContextMenuCascadeOnOverviewEntry
                     (useMenuEntryWithTextContaining "dock" menuCascadeCompleted)
                     entry
-                    readingFromGameClient
+                    context.readingFromGameClient
             )
         |> Maybe.withDefault
             (warpToRefineryStructure context)
