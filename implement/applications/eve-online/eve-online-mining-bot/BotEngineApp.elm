@@ -1030,7 +1030,10 @@ dockToStationOrStructureWithMatchingName { prioritizeStructures, nameFromSetting
                     context.readingFromGameClient
             )
         |> Maybe.withDefault
-            (warpToRefineryStructure context)
+                (returnDronesToBay context.readingFromGameClient
+                    |> Maybe.withDefault
+                        (warpToRefineryStructure context)
+                )
             -- (overviewWindowScrollControls
             --     |> Maybe.andThen scrollDown
             --     |> Maybe.withDefault
