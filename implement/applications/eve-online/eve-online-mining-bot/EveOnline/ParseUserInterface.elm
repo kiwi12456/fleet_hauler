@@ -2264,8 +2264,8 @@ parseFleetWindow windowUINode =
         fleetMembers =
             windowUINode
                 |> listDescendantsWithDisplayRegion
-                |> List.filter (.uiNode >> getNameFromDictEntries >> (==) (Just "lastbroadcastheader"))
-                |> List.head
+                -- |> List.filter (.uiNode >> getNameFromDictEntries >> (==) (Just "lastbroadcastheader"))
+                |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "EveLabelMedium")
     in
     { uiNode = windowUINode
     , fleetMembers = fleetMembers
