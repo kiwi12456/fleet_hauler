@@ -544,7 +544,16 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                         Nothing ->
                                                                                             describeBranch ("Cannot find fleet broadcast message.") askForHelpToGetUnstuck
                                                                                         Just actualDestination ->
-                                                                                            describeBranch ("Actual Destination is: " ++ actualDestination) askForHelpToGetUnstuck
+                                                                                            case context.readingFromGameClient.infoPanelContainer.uiNode
+                                                                                                |> getAllContainedDisplayTexts
+                                                                                                |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "alt='Current Solar System'")
+                                                                                                |> List.head
+                                                                                                |> Maybe.map String.trim of
+                                                                                                Nothing -> 
+                                                                                                    describeBranch ("Current Solar System Not Found") askForHelpToGetUnstuck
+                                                                                                Just currentSolarSystem ->
+                                                                                                
+                                                                                                    describeBranch ("Actual Destination is: " ++ actualDestination ++ currentSolarSystem) askForHelpToGetUnstuck
                                                                                             -- if (actualInteger > 100) then
 
 
