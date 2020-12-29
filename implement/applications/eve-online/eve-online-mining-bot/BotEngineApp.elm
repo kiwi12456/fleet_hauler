@@ -559,13 +559,13 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                                             (returnDronesToBay context.readingFromGameClient
                                                                                                                 |> Maybe.withDefault (warpToWatchlistEntry context)
                                                                                                             )
-                                                                                            --         else
-                                                                                            --             describeBranch "Fleet Window found in different solar system. Set destination to fleet commander solar system."
-                                                                                            --                 (useContextMenuCascade
-                                                                                            --                     ( "Fleet destination", fleetDestination )
-                                                                                            --                     (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
-                                                                                            --                     context.readingFromGameClient
-                                                                                            --                 )
+                                                                                                    else
+                                                                                                        describeBranch "Fleet Window found in different solar system. Set destination to fleet commander solar system."
+                                                                                                            (useContextMenuCascade
+                                                                                                                ( "Fleet destination", fleetDestination )
+                                                                                                                (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
+                                                                                                                context.readingFromGameClient
+                                                                                                            )
 
                                                                     Nothing ->
                                                                         describeBranch "I see no fleet commander. Warp to fleet commander."      
