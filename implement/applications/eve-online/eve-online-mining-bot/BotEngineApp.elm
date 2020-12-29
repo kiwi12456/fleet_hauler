@@ -712,8 +712,8 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                 (endDecisionPath
                                                     (actWithoutFurtherReadings
                                                         ( "Click at scroll control bottom"
-                                                        , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_END
-                                                            , EffectOnWindow.KeyUp EffectOnWindow.vkey_END
+                                                        , [ EffectOnWindow.KeyDown EffectOnWindow.vkey_HOME
+                                                            , EffectOnWindow.KeyUp EffectOnWindow.vkey_HOME
                                                             ]
                                                         )
                                                     )
