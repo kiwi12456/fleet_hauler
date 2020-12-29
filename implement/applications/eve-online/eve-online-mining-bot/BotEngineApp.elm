@@ -536,7 +536,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                             Nothing ->
                                                                 case context.readingFromGameClient.fleetWindow |> Maybe.andThen (.fleetMembers >> List.head) of
                                                                     Just fleetDestination ->
-                                                                        case fleetDestination.uiNode.uiNode |> getAllContainedDisplayTexts |> List.head of
+                                                                        case fleetDestination.uiNode |> getAllContainedDisplayTexts |> List.head of
                                                                             Nothing ->
                                                                                 describeBranch ("Cannot find fleet broadcast.") askForHelpToGetUnstuck
                                                                             Just fleetBroadcastText ->
