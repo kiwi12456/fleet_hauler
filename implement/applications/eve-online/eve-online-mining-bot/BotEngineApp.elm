@@ -545,7 +545,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                         Nothing ->
                                                                                             describeBranch ("Cannot find fleet broadcast message.") askForHelpToGetUnstuck
                                                                                         Just actualDestination ->
-                                                                                            case context.readingFromGameClient.infoPanelContainer.uiNode
+                                                                                            case context.readingFromGameClient.infoPanelContainer.uiNode.uiNode
                                                                                                 |> getAllContainedDisplayTexts
                                                                                                 |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "alt='Current Solar System'")
                                                                                                 |> List.head
