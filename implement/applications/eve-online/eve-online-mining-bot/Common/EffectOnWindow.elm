@@ -53,6 +53,15 @@ effectsForDragAndDrop { startLocation, mouseButton, endLocation } =
     , KeyUp (virtualKeyCodeFromMouseButton mouseButton)
     ]
 
+effectsForFleetDragAndDrop : { startLocation : Location2d, mouseButton : MouseButton, endLocation : Location2d } -> List EffectOnWindowStructure
+effectsForFleetDragAndDrop { startLocation, mouseButton, endLocation } =
+    [ MouseMoveTo startLocation
+    , KeyDown (virtualKeyCodeFromMouseButton mouseButton)
+    , MouseMoveTo endLocation
+    , KeyUp (virtualKeyCodeFromMouseButton mouseButton)
+    , KeyDown (virtualKeyCodeFromMouseButton mouseButton)
+    , KeyUp (virtualKeyCodeFromMouseButton mouseButton)
+    ]
 
 virtualKeyCodeFromMouseButton : MouseButton -> VirtualKeyCode
 virtualKeyCodeFromMouseButton mouseButton =

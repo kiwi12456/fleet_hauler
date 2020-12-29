@@ -694,7 +694,7 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                                                                             (endDecisionPath
                                                                                 (actWithoutFurtherReadings
                                                                                     ( "Drag and drop."
-                                                                                    , EffectOnWindow.effectsForDragAndDrop
+                                                                                    , EffectOnWindow.effectsForFleetDragAndDrop
                                                                                         { startLocation = itemInInventory.totalDisplayRegion |> centerFromDisplayRegion
                                                                                         , endLocation = oreHold.totalDisplayRegion |> centerFromDisplayRegion
                                                                                         , mouseButton = MouseButtonLeft
