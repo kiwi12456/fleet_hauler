@@ -552,23 +552,18 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                                 Nothing -> 
                                                                                                     describeBranch ("Current Solar System Not Found") askForHelpToGetUnstuck
                                                                                                 Just currentSolarSystem ->
-                                                                                                
-                                                                                                    describeBranch ("Actual Destination is: " ++ actualDestination ++ currentSolarSystem) askForHelpToGetUnstuck
-                                                                                            -- if (actualInteger > 100) then
-
-
-
-                                                                        -- describeBranch "Fleet Window Found. Set destination to fleet commander solar system."
-                                                                        --     (useContextMenuCascade
-                                                                        --         ( "Fleet destination", fleetDestination )
-                                                                        --         (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
-                                                                        --         context.readingFromGameClient
-                                                                        --     )
-                                                                    Nothing ->
-                                                                        describeBranch "I see no fleet commander. Warp to fleet commander."      
-                                                                            (returnDronesToBay context.readingFromGameClient
-                                                                                |> Maybe.withDefault (warpToWatchlistEntry context)
-                                                                            )
+                                                                                                    if (actualDestination == currentSolarSystem) then
+                                                                                                        describeBranch "I see no fleet commander. Warp to fleet commander."      
+                                                                                                            (returnDronesToBay context.readingFromGameClient
+                                                                                                                |> Maybe.withDefault (warpToWatchlistEntry context)
+                                                                                                            )
+                                                                                                    else
+                                                                                                        describeBranch "Fleet Window found in different solar system. Set destination to fleet commander solar system."
+                                                                                                            (useContextMenuCascade
+                                                                                                                ( "Fleet destination", fleetDestination )
+                                                                                                                (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
+                                                                                                                context.readingFromGameClient
+                                                                                                            )
 
                                                             Just fleetCommanderInOverview ->
                                                                 (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
