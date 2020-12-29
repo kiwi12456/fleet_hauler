@@ -522,18 +522,28 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                         describeBranch ("I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar.")
                                             (case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
                                                     Nothing ->
-                                                        describeBranch "I see no fleet commander. Warp to fleet commander."
-                                                            (warpToWatchlistEntry context)
-
-                                                    Just fleetCommanderInOverview ->
-                                                        (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
-                                                            |> Maybe.withDefault
-                                                                (useContextMenuCascadeOnOverviewEntry
-                                                                    (useMenuEntryWithTextContaining "Open Fleet Hangar" menuCascadeCompleted)
-                                                                    fleetCommanderInOverview
-                                                                    context.readingFromGameClient
+                                                        case context.readingFromGameClient.fleetWindow |> Maybe.andThen (.entries >> List.head) of
+                                                            Just fleetDestination ->
+                                                                describeBranch "Fleet Window Found. Set destination to fleet commander solar system."
+                                                                    (useContextMenuCascade
+                                                                        ( "Fleet destination", fleetDestination )
+                                                                        (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
+                                                                        context.readingFromGameClient
+                                                                    )
+                                                            Nothing ->
+                                                                describeBranch "I see no fleet commander. Warp to fleet commander."      
+                                                                    (returnDronesToBay context.readingFromGameClient
+                                                                        |> Maybe.withDefault (warpToWatchlistEntry context)
+                                                                    )
+                                                            Just fleetCommanderInOverview ->
+                                                                (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                                                                    |> Maybe.withDefault
+                                                                        (useContextMenuCascadeOnOverviewEntry
+                                                                            (useMenuEntryWithTextContaining "Open Fleet Hangar" menuCascadeCompleted)
+                                                                            fleetCommanderInOverview
+                                                                            context.readingFromGameClient
+                                                                        )
                                                                 )
-                                                        )
                                             )
 
                                     Just fleetHangar ->
@@ -580,7 +590,9 @@ inSpaceWithFleetHangarSelected context seeUndockingComplete inventoryWindowWithF
                         (case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
                             Nothing ->
                                 describeBranch "I see no fleet commander. Warp to fleet commander."
-                                    (warpToWatchlistEntry context)
+                                    (returnDronesToBay context.readingFromGameClient
+                                        |> Maybe.withDefault (warpToWatchlistEntry context)
+                                    )
 
                             Just fleetCommanderInOverview ->
                                 if 1 <= fillPercent then
@@ -923,7 +935,9 @@ ensureFleetHangarIsSelectedInInventoryWindow context continueWithInventoryWindow
                     case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
                         Nothing ->
                             describeBranch "I see no fleet commander. Warp to fleet commander."
-                                (warpToWatchlistEntry context)
+                                (returnDronesToBay context.readingFromGameClient
+                                    |> Maybe.withDefault (warpToWatchlistEntry context)
+                                )
 
                         Just fleetCommanderInOverview ->
                             describeBranch
