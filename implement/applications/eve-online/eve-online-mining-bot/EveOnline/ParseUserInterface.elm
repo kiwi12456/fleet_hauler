@@ -2265,6 +2265,7 @@ parseFleetWindow windowUINode =
             windowUINode
                 |> listDescendantsWithDisplayRegion
                 |> List.filter (.uiNode >> getNameFromDictEntries >> (==) (Just "lastbroadcastheader"))
+                |> List.head
     in
     { uiNode = windowUINode
     , fleetMembers = fleetMembers
