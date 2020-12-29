@@ -55,6 +55,7 @@ import EveOnline.ParseUserInterface
         ( OverviewWindowEntry
         , centerFromDisplayRegion
         , getAllContainedDisplayTexts
+        , getSubstringBetweenXmlTagsAfterMarker
         )
 import Regex
 
