@@ -553,7 +553,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                                     describeBranch ("Current Solar System Not Found") askForHelpToGetUnstuck
                                                                                                 Just currentSolarSystem ->
                                                                                                     
-                                                                                                    describeBranch ("Actual Destination is: " ++ (actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
+                                                                                                    describeBranch ("Actual Destination is: " ++ stringFromBool(actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
                                                                                             
 
                                                                                             -- Just currentSolarSystem ->
@@ -1773,3 +1773,12 @@ shipManeuverIsApproaching =
         >> Maybe.map ((==) EveOnline.ParseUserInterface.ManeuverApproach)
         -- If the ship is just floating in space, there might be no indication displayed.
         >> Maybe.withDefault False
+
+
+stringFromBool : Bool -> String
+stringFromBool value =
+  if value then
+    "True"
+
+  else
+    "False"
