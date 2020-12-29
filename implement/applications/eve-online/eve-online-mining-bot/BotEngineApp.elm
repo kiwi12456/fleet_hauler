@@ -540,12 +540,12 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                             Nothing ->
                                                                                 describeBranch ("Cannot find fleet broadcast.") askForHelpToGetUnstuck
                                                                             Just fleetBroadcastText ->
-                                                                            case (String.split " " fleetBroadcastText |> List.reverse |> List.head) of
-                                                                                    Nothing ->
-                                                                                        describeBranch ("Cannot find fleet broadcast message.") askForHelpToGetUnstuck
-                                                                                    Just actualDestination ->
-                                                                                        describeBranch ("Actual Destination is: " ++ actualDestination) askForHelpToGetUnstuck
-                                                                                        -- if (actualInteger > 100) then
+                                                                                case (String.split " " fleetBroadcastText |> List.reverse |> List.head) of
+                                                                                        Nothing ->
+                                                                                            describeBranch ("Cannot find fleet broadcast message.") askForHelpToGetUnstuck
+                                                                                        Just actualDestination ->
+                                                                                            describeBranch ("Actual Destination is: " ++ actualDestination) askForHelpToGetUnstuck
+                                                                                            -- if (actualInteger > 100) then
 
 
 
