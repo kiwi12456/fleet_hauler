@@ -545,11 +545,10 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                         Nothing ->
                                                                                             describeBranch ("Cannot find fleet broadcast message.") askForHelpToGetUnstuck
                                                                                         Just actualDestination ->
-                                                                                            case context.readingFromGameClient.infoPanelContainer.uiNode.uiNode
-                                                                                                |> getAllContainedDisplayTexts
-                                                                                                |> List.filterMap (getSubstringBetweenXmlTagsAfterMarker "alt='Current Solar System'")
-                                                                                                |> List.head
-                                                                                                |> Maybe.map String.trim of
+                                                                                            case context.readingFromGameClient.infoPanelContainer
+                                                                                                    |> Maybe.andThen .infoPanelLocationInfo
+                                                                                                    |> Maybe.andThen .currentSolarSystemName
+                                                                                            of
                                                                                                 Nothing -> 
                                                                                                     describeBranch ("Current Solar System Not Found") askForHelpToGetUnstuck
                                                                                                 Just currentSolarSystem ->
