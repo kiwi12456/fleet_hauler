@@ -535,15 +535,16 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                     (returnDronesToBay context.readingFromGameClient
                                                                         |> Maybe.withDefault (warpToWatchlistEntry context)
                                                                     )
-                                                            Just fleetCommanderInOverview ->
-                                                                (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
-                                                                    |> Maybe.withDefault
-                                                                        (useContextMenuCascadeOnOverviewEntry
-                                                                            (useMenuEntryWithTextContaining "Open Fleet Hangar" menuCascadeCompleted)
-                                                                            fleetCommanderInOverview
-                                                                            context.readingFromGameClient
-                                                                        )
+                                                                    
+                                                    Just fleetCommanderInOverview ->
+                                                        (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                                                            |> Maybe.withDefault
+                                                                (useContextMenuCascadeOnOverviewEntry
+                                                                    (useMenuEntryWithTextContaining "Open Fleet Hangar" menuCascadeCompleted)
+                                                                    fleetCommanderInOverview
+                                                                    context.readingFromGameClient
                                                                 )
+                                                        )
                                             )
 
                                     Just fleetHangar ->
