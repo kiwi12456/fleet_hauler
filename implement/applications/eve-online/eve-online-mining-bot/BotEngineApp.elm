@@ -536,12 +536,25 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                             Nothing ->
                                                                 case context.readingFromGameClient.fleetWindow |> Maybe.andThen (.fleetMembers >> List.head) of
                                                                     Just fleetDestination ->
-                                                                        describeBranch "Fleet Window Found. Set destination to fleet commander solar system."
-                                                                            (useContextMenuCascade
-                                                                                ( "Fleet destination", fleetDestination )
-                                                                                (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
-                                                                                context.readingFromGameClient
-                                                                            )
+                                                                        case fleetDestination.uiNode.uiNode |> getAllContainedDisplayTexts |> List.head of
+                                                                            Nothing ->
+                                                                                describeBranch ("Cannot find fleet broadcast.") askForHelpToGetUnstuck
+                                                                            Just fleetBroadcastText ->
+                                                                            case (String.split " " fleetBroadcastText |> List.reverse |> List.head) of
+                                                                                    Nothing ->
+                                                                                        describeBranch ("Cannot find fleet broadcast message.") askForHelpToGetUnstuck
+                                                                                    Just actualDestination ->
+                                                                                        describeBranch ("Actual Destination is: " ++ actualDestination) askForHelpToGetUnstuck
+                                                                                        -- if (actualInteger > 100) then
+
+
+
+                                                                        -- describeBranch "Fleet Window Found. Set destination to fleet commander solar system."
+                                                                        --     (useContextMenuCascade
+                                                                        --         ( "Fleet destination", fleetDestination )
+                                                                        --         (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
+                                                                        --         context.readingFromGameClient
+                                                                        --     )
                                                                     Nothing ->
                                                                         describeBranch "I see no fleet commander. Warp to fleet commander."      
                                                                             (returnDronesToBay context.readingFromGameClient
