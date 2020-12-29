@@ -554,14 +554,15 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                                 Just currentSolarSystem ->
                                                                                                     
                                                                                                     describeBranch ("Actual Destination is: " ++ stringFromBool(actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
+                                                                                                    if (actualDestination == currentSolarSystem) then
                                                                                             
 
                                                                                             -- Just currentSolarSystem ->
                                                                                             --         if (actualDestination == currentSolarSystem) then
-                                                                                            --             describeBranch "I see no fleet commander. Warp to fleet commander."      
-                                                                                            --                 (returnDronesToBay context.readingFromGameClient
-                                                                                            --                     |> Maybe.withDefault (warpToWatchlistEntry context)
-                                                                                            --                 )
+                                                                                                        describeBranch "I see no fleet commander. Warp to fleet commander."      
+                                                                                                            (returnDronesToBay context.readingFromGameClient
+                                                                                                                |> Maybe.withDefault (warpToWatchlistEntry context)
+                                                                                                            )
                                                                                             --         else
                                                                                             --             describeBranch "Fleet Window found in different solar system. Set destination to fleet commander solar system."
                                                                                             --                 (useContextMenuCascade
