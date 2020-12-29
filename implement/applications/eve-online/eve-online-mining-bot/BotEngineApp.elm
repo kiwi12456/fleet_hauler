@@ -552,7 +552,6 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                                 Nothing -> 
                                                                                                     describeBranch ("Current Solar System Not Found") askForHelpToGetUnstuck
                                                                                                 Just currentSolarSystem ->
-                                                                                                    
                                                                                                     -- describeBranch ("Actual Destination is: " ++ stringFromBool(actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
                                                                                                     if (actualDestination == currentSolarSystem) then
                                                                                                         describeBranch "I see no fleet commander. Warp to fleet commander."      
