@@ -554,12 +554,12 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                                 Just currentSolarSystem ->
                                                                                                     -- describeBranch ("Actual Destination is: " ++ stringFromBool(actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
                                                                                                     if (actualDestination == currentSolarSystem) || (actualDestination == "Broadcasts)") then
-                                                                                                        describeBranch "I see no fleet commander. Warp to fleet commander." ++ actualDestination   
+                                                                                                        describeBranch ("I see no fleet commander. Warp to fleet commander." ++ actualDestination)
                                                                                                             (returnDronesToBay context.readingFromGameClient
                                                                                                                 |> Maybe.withDefault (warpToWatchlistEntry context)
                                                                                                             )
                                                                                                     else
-                                                                                                        describeBranch "Fleet Window found in different solar system. Set destination to fleet commander solar system." ++ actualDestination
+                                                                                                        describeBranch ("Fleet Window found in different solar system. Set destination to fleet commander solar system." ++ actualDestination)
                                                                                                             (useContextMenuCascade
                                                                                                                 ( "Fleet destination", fleetDestination )
                                                                                                                 (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
