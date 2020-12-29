@@ -553,12 +553,8 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                                                     describeBranch ("Current Solar System Not Found") askForHelpToGetUnstuck
                                                                                                 Just currentSolarSystem ->
                                                                                                     
-                                                                                                    describeBranch ("Actual Destination is: " ++ stringFromBool(actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
+                                                                                                    -- describeBranch ("Actual Destination is: " ++ stringFromBool(actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
                                                                                                     if (actualDestination == currentSolarSystem) then
-                                                                                            
-
-                                                                                            -- Just currentSolarSystem ->
-                                                                                            --         if (actualDestination == currentSolarSystem) then
                                                                                                         describeBranch "I see no fleet commander. Warp to fleet commander."      
                                                                                                             (returnDronesToBay context.readingFromGameClient
                                                                                                                 |> Maybe.withDefault (warpToWatchlistEntry context)
