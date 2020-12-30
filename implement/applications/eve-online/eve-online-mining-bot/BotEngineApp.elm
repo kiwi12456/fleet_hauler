@@ -1202,7 +1202,10 @@ warpToRefineryStructure context =
             describeBranch "Warp to refinery structure in group window."
                 (useContextMenuCascade
                     ( "Group entry", groupEntry )
-                    (useMenuEntryWithTextContaining "Jump through stargate" menuCascadeCompleted)
+                    (useMenuEntryWithTextContainingFirstOf
+                        [ "dock", "jump" ]
+                        menuCascadeCompleted
+                    )
                     context.readingFromGameClient
                 )
 
