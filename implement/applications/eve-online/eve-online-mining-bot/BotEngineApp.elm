@@ -808,7 +808,7 @@ approachFleetCommanderIfFarEnough : BotDecisionContext -> OverviewWindowEntry ->
 approachFleetCommanderIfFarEnough context fleetCommanderOverviewEntry =
     case fleetCommanderOverviewEntry.objectDistanceInMeters of
         Ok distanceInMeters ->
-            if distanceInMeters <= 2000 then
+            if distanceInMeters <= 2500 then
                 Nothing
 
             else
