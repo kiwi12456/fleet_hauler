@@ -31,7 +31,6 @@ type alias ParsedUserInterface =
     , repairShopWindow : Maybe RepairShopWindow
     , characterSheetWindow : Maybe CharacterSheetWindow
     , fleetWindow : Maybe FleetWindow
-    , fleetBroadcast : Maybe FleetBroadcast
     , watchListPanel : Maybe WatchListPanel
     , groupWindow: Maybe GroupWindow
     , moduleButtonTooltip : Maybe ModuleButtonTooltip
@@ -484,10 +483,6 @@ type alias FleetWindow =
     , fleetMembers : List UITreeNodeWithDisplayRegion
     }
 
-type alias FleetBroadcast =
-    { uiNode : UITreeNodeWithDisplayRegion
-    , fleetMembers : List UITreeNodeWithDisplayRegion
-    }
 
 type alias WatchListPanel =
     { uiNode : UITreeNodeWithDisplayRegion
@@ -537,7 +532,6 @@ parseUserInterfaceFromUITree uiTree =
     , repairShopWindow = parseRepairShopWindowFromUITreeRoot uiTree
     , characterSheetWindow = parseCharacterSheetWindowFromUITreeRoot uiTree
     , fleetWindow = parseFleetWindowFromUITreeRoot uiTree
-    , fleetBroadcast = parseFleetBroadcastFromUITreeRoot uiTree
     , watchListPanel = parseWatchListPanelFromUITreeRoot uiTree
     , groupWindow = parseGroupWindowFromUITreeRoot uiTree
     , neocom = parseNeocomFromUITreeRoot uiTree
@@ -2270,32 +2264,13 @@ parseFleetWindow windowUINode =
         fleetMembers =
             windowUINode
                 |> listDescendantsWithDisplayRegion
-                |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "FleetMember")
+                |> List.filter (.uiNode >> getNameFromDictEntries >> (==) (Just "lastbroadcastheader"))
+                -- |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "EveLabelMedium")
     in
     { uiNode = windowUINode
     , fleetMembers = fleetMembers
     }
 
-parseFleetBroadcastFromUITreeRoot : UITreeNodeWithDisplayRegion -> Maybe FleetBroadcast
-parseFleetBroadcastFromUITreeRoot uiTreeRoot =
-    uiTreeRoot
-        |> listDescendantsWithDisplayRegion
-        |> List.filter (.uiNode >> .pythonObjectTypeName >> (==) "FleetWindow")
-        |> List.head
-        |> Maybe.map parseFleetBroadcast
-
-
-parseFleetBroadcast : UITreeNodeWithDisplayRegion -> FleetBroadcast
-parseFleetBroadcast windowUINode =
-    let
-        broadcast =
-            windowUINode
-                |> listDescendantsWithDisplayRegion
-                |> List.filter (.uiNode >> getNameFromDictEntries >> (==) (Just "lastbroadcastheader"))
-    in
-    { uiNode = windowUINode
-    , broadcast = broadcast
-    }
 
 parseWatchListPanelFromUITreeRoot : UITreeNodeWithDisplayRegion -> Maybe WatchListPanel
 parseWatchListPanelFromUITreeRoot uiTreeRoot =
