@@ -535,7 +535,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                 describeBranch ("I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar.")
                                                     (case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
                                                             Nothing ->
-                                                                case context.readingFromGameClient.fleetWindow |> Maybe.andThen (.fleetMembers >> List.head) of
+                                                                case context.readingFromGameClient.fleetBroadcast |> Maybe.andThen (.broadcast >> List.head) of
                                                                     Just fleetDestination ->
                                                                         case fleetDestination.uiNode |> getAllContainedDisplayTexts |> List.head of
                                                                             Nothing ->
