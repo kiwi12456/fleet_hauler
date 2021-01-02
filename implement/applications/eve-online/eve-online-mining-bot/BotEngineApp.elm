@@ -1640,7 +1640,7 @@ activeShipTreeEntryFromInventoryWindow =
 
 
 topmostAsteroidFromOverviewWindow : BotDecisionContext -> Maybe OverviewWindowEntry
-topmostAsteroidFromOverviewWindow =
+topmostAsteroidFromOverviewWindow context =
     overviewWindowEntriesRepresentingAsteroids
         >> List.take (context.eventContext.timeInMilliseconds |> modBy 5)
         >> List.sortBy (.uiNode >> .totalDisplayRegion >> .y)
