@@ -502,7 +502,19 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
             Just fleetWindow ->
                 case context.readingFromGameClient.watchListPanel of
                     Nothing ->
-                        describeBranch "Watch List not open. Wait." waitForProgressInGame
+                        describeBranch "Watch List not open. Open it."
+                            (case context.readingFromGameClient.fleetWindow |> Maybe.andThen (.fleetMembers >> List.head) of
+                                Just fleetMembers ->
+                                    (useContextMenuCascade
+                                        ( "Fleet destination", fleetMembers )
+                                        (useMenuEntryWithTextContaining "Watch List" menuCascadeCompleted)
+                                        context.readingFromGameClient
+                                    )
+
+                                Nothing ->
+                                    describeBranch ("Fleet is not formed. Please take remedial action.") askForHelpToGetUnstuck
+                            )
+
                     Just watchList ->
                         case context.readingFromGameClient |> infoPanelRouteFirstMarkerFromReadingFromGameClient of
                             Just infoPanelRouteFirstMarker ->
@@ -543,7 +555,7 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                                                                 describeBranch ("I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar.")
                                                                     (case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
                                                                             Nothing ->
-                                                                                case context.readingFromGameClient.fleetWindow |> Maybe.andThen (.fleetMembers >> List.head) of
+                                                                                case context.readingFromGameClient.fleetBroadcast |> Maybe.andThen (.fleetBroadcast >> List.head) of
                                                                                     Just fleetDestination ->
                                                                                         case fleetDestination.uiNode |> getAllContainedDisplayTexts |> List.head of
                                                                                             Nothing ->
