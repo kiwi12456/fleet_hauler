@@ -310,7 +310,7 @@ closeMessageBox readingFromGameClient =
                     (let
                         buttonCanBeUsedToClose =
                             .mainText
-                                >> Maybe.map (String.trim >> String.toLower >> (\buttonText -> [ "close", "ok" ] |> List.member buttonText))
+                                >> Maybe.map (String.trim >> String.toLower >> (\buttonText -> [ "close", "ok", "yes" ] |> List.member buttonText))
                                 >> Maybe.withDefault False
                      in
                      case messageBox.buttons |> List.filter buttonCanBeUsedToClose |> List.head of
