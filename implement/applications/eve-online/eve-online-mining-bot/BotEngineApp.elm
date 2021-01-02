@@ -504,105 +504,102 @@ inSpaceWithOreHoldSelected context seeUndockingComplete inventoryWindowWithOreHo
                     Nothing ->
                         describeBranch "Watch List not open. Wait." waitForProgressInGame
                     Just watchList ->
-                        describeBranch "Watch List open. Wait." waitForProgressInGame
+                        case context.readingFromGameClient |> infoPanelRouteFirstMarkerFromReadingFromGameClient of
+                            Just infoPanelRouteFirstMarker ->
+                                useContextMenuCascade
+                                    ( "route element icon", infoPanelRouteFirstMarker.uiNode )
+                                    (useMenuEntryWithTextContainingFirstOf
+                                        [ "dock", "jump" ]
+                                        menuCascadeCompleted
+                                    )
+                                    context.readingFromGameClient
+                            
+                            Nothing ->
+                                case context |> knownModulesToActivateAlways |> List.filter (Tuple.second >> .isActive >> Maybe.withDefault False >> not) |> List.head of
+                                    Just ( inactiveModuleMatchingText, inactiveModule ) ->
+                                        describeBranch ("I see inactive module '" ++ inactiveModuleMatchingText ++ "' to activate always. Activate it.")
+                                            (clickModuleButtonButWaitIfClickedInPreviousStep context inactiveModule)
 
+                                    Nothing ->
+                                        case inventoryWindowWithOreHoldSelected |> capacityGaugeUsedPercent of
+                                            Nothing ->
+                                                describeBranch "I do not see the ore hold capacity gauge." askForHelpToGetUnstuck
 
-        -- case context.readingFromGameClient |> infoPanelRouteFirstMarkerFromReadingFromGameClient of
-        --     Just infoPanelRouteFirstMarker ->
-        --         useContextMenuCascade
-        --             ( "route element icon", infoPanelRouteFirstMarker.uiNode )
-        --             (useMenuEntryWithTextContainingFirstOf
-        --                 [ "dock", "jump" ]
-        --                 menuCascadeCompleted
-        --             )
-        --             context.readingFromGameClient
-            
-        --     Nothing ->
-        --         case context |> knownModulesToActivateAlways |> List.filter (Tuple.second >> .isActive >> Maybe.withDefault False >> not) |> List.head of
-        --             Just ( inactiveModuleMatchingText, inactiveModule ) ->
-        --                 describeBranch ("I see inactive module '" ++ inactiveModuleMatchingText ++ "' to activate always. Activate it.")
-        --                     (clickModuleButtonButWaitIfClickedInPreviousStep context inactiveModule)
+                                            Just fillPercent ->
+                                                let
+                                                    describeThresholdToUnload =
+                                                        (context.eventContext.appSettings.oreHoldMaxPercent |> String.fromInt) ++ "%"
+                                                in
+                                                if context.eventContext.appSettings.oreHoldMaxPercent <= fillPercent then
+                                                    describeBranch ("The ore hold is filled at least " ++ describeThresholdToUnload ++ ". Unload the ore.")
+                                                        (returnDronesToBay context.readingFromGameClient
+                                                            |> Maybe.withDefault (dockToUnloadOre context)
+                                                        )
 
-        --             Nothing ->
-        --                 case inventoryWindowWithOreHoldSelected |> capacityGaugeUsedPercent of
-        --                     Nothing ->
-        --                         describeBranch "I do not see the ore hold capacity gauge." askForHelpToGetUnstuck
+                                                else
+                                                    describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore from fleet hangar.")
+                                                        (case inventoryWindowWithOreHoldSelected |> fleetHangarFromInventoryWindow of
+                                                            Nothing ->                             
+                                                                describeBranch ("I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar.")
+                                                                    (case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
+                                                                            Nothing ->
+                                                                                case context.readingFromGameClient.fleetWindow |> Maybe.andThen (.fleetMembers >> List.head) of
+                                                                                    Just fleetDestination ->
+                                                                                        case fleetDestination.uiNode |> getAllContainedDisplayTexts |> List.head of
+                                                                                            Nothing ->
+                                                                                                describeBranch ("Cannot find fleet broadcast.") askForHelpToGetUnstuck
+                                                                                            Just fleetBroadcastText ->
+                                                                                                case (String.split " " fleetBroadcastText |> List.reverse |> List.head) of
+                                                                                                        Nothing ->
+                                                                                                            describeBranch ("Cannot find fleet broadcast message.") askForHelpToGetUnstuck
+                                                                                                        Just actualDestination ->
+                                                                                                            case context.readingFromGameClient.infoPanelContainer
+                                                                                                                    |> Maybe.andThen .infoPanelLocationInfo
+                                                                                                                    |> Maybe.andThen .currentSolarSystemName
+                                                                                                            of
+                                                                                                                Nothing -> 
+                                                                                                                    describeBranch ("Current Solar System Not Found") askForHelpToGetUnstuck
+                                                                                                                Just currentSolarSystem ->
+                                                                                                                    -- describeBranch ("Actual Destination is: " ++ stringFromBool(actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
+                                                                                                                    if (actualDestination == currentSolarSystem) || (actualDestination == "Broadcasts)") then
+                                                                                                                        describeBranch ("I see no fleet commander. Warp to fleet commander.")
+                                                                                                                            (returnDronesToBay context.readingFromGameClient
+                                                                                                                                |> Maybe.withDefault (warpToWatchlistEntry context)
+                                                                                                                            )
+                                                                                                                    else
+                                                                                                                        describeBranch ("Fleet Window found in different solar system. Set destination to fleet commander solar system.")
+                                                                                                                            (useContextMenuCascade
+                                                                                                                                ( "Fleet destination", fleetDestination )
+                                                                                                                                (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
+                                                                                                                                context.readingFromGameClient
+                                                                                                                            )
 
-        --                     Just fillPercent ->
-        --                         let
-        --                             describeThresholdToUnload =
-        --                                 (context.eventContext.appSettings.oreHoldMaxPercent |> String.fromInt) ++ "%"
-        --                         in
-        --                         if context.eventContext.appSettings.oreHoldMaxPercent <= fillPercent then
-        --                             describeBranch ("The ore hold is filled at least " ++ describeThresholdToUnload ++ ". Unload the ore.")
-        --                                 (returnDronesToBay context.readingFromGameClient
-        --                                     |> Maybe.withDefault (dockToUnloadOre context)
-        --                                 )
+                                                                                    Nothing ->
+                                                                                        describeBranch "I see no fleet commander. Warp to fleet commander."      
+                                                                                            (returnDronesToBay context.readingFromGameClient
+                                                                                                |> Maybe.withDefault (warpToWatchlistEntry context)
+                                                                                            )
 
-        --                         else
-        --                             describeBranch ("The ore hold is not yet filled " ++ describeThresholdToUnload ++ ". Get more ore from fleet hangar.")
-        --                                 (case inventoryWindowWithOreHoldSelected |> fleetHangarFromInventoryWindow of
-        --                                     Nothing ->                             
-        --                                         describeBranch ("I do not see the fleet hangar under the active ship in the inventory. Approach fleet commander and open fleen hangar.")
-        --                                             (case context.readingFromGameClient |> fleetCommanderFromOverviewWindow of
-        --                                                     Nothing ->
-        --                                                         case context.readingFromGameClient.fleetWindow |> Maybe.andThen (.fleetMembers >> List.head) of
-        --                                                             Just fleetDestination ->
-        --                                                                 case fleetDestination.uiNode |> getAllContainedDisplayTexts |> List.head of
-        --                                                                     Nothing ->
-        --                                                                         describeBranch ("Cannot find fleet broadcast.") askForHelpToGetUnstuck
-        --                                                                     Just fleetBroadcastText ->
-        --                                                                         case (String.split " " fleetBroadcastText |> List.reverse |> List.head) of
-        --                                                                                 Nothing ->
-        --                                                                                     describeBranch ("Cannot find fleet broadcast message.") askForHelpToGetUnstuck
-        --                                                                                 Just actualDestination ->
-        --                                                                                     case context.readingFromGameClient.infoPanelContainer
-        --                                                                                             |> Maybe.andThen .infoPanelLocationInfo
-        --                                                                                             |> Maybe.andThen .currentSolarSystemName
-        --                                                                                     of
-        --                                                                                         Nothing -> 
-        --                                                                                             describeBranch ("Current Solar System Not Found") askForHelpToGetUnstuck
-        --                                                                                         Just currentSolarSystem ->
-        --                                                                                             -- describeBranch ("Actual Destination is: " ++ stringFromBool(actualDestination == currentSolarSystem)) askForHelpToGetUnstuck
-        --                                                                                             if (actualDestination == currentSolarSystem) || (actualDestination == "Broadcasts)") then
-        --                                                                                                 describeBranch ("I see no fleet commander. Warp to fleet commander.")
-        --                                                                                                     (returnDronesToBay context.readingFromGameClient
-        --                                                                                                         |> Maybe.withDefault (warpToWatchlistEntry context)
-        --                                                                                                     )
-        --                                                                                             else
-        --                                                                                                 describeBranch ("Fleet Window found in different solar system. Set destination to fleet commander solar system.")
-        --                                                                                                     (useContextMenuCascade
-        --                                                                                                         ( "Fleet destination", fleetDestination )
-        --                                                                                                         (useMenuEntryWithTextContaining "Set Destination" menuCascadeCompleted)
-        --                                                                                                         context.readingFromGameClient
-        --                                                                                                     )
+                                                                            Just fleetCommanderInOverview ->
+                                                                                (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
+                                                                                    |> Maybe.withDefault
+                                                                                        (useContextMenuCascadeOnOverviewEntry
+                                                                                            (useMenuEntryWithTextContaining "Open Fleet Hangar" menuCascadeCompleted)
+                                                                                            fleetCommanderInOverview
+                                                                                            context.readingFromGameClient
+                                                                                        )
+                                                                                )
+                                                                    )
 
-        --                                                             Nothing ->
-        --                                                                 describeBranch "I see no fleet commander. Warp to fleet commander."      
-        --                                                                     (returnDronesToBay context.readingFromGameClient
-        --                                                                         |> Maybe.withDefault (warpToWatchlistEntry context)
-        --                                                                     )
+                                                            Just fleetHangar ->
+                                                                endDecisionPath
+                                                                    (actWithoutFurtherReadings
+                                                                        ( "Click the tree entry representing the fleet hangar."
+                                                                        , fleetHangar |> clickOnUIElement MouseButtonLeft
+                                                                        )
+                                                                    )
 
-        --                                                     Just fleetCommanderInOverview ->
-        --                                                         (approachFleetCommanderIfFarEnough context fleetCommanderInOverview
-        --                                                             |> Maybe.withDefault
-        --                                                                 (useContextMenuCascadeOnOverviewEntry
-        --                                                                     (useMenuEntryWithTextContaining "Open Fleet Hangar" menuCascadeCompleted)
-        --                                                                     fleetCommanderInOverview
-        --                                                                     context.readingFromGameClient
-        --                                                                 )
-        --                                                         )
-        --                                             )
-
-        --                                     Just fleetHangar ->
-        --                                         endDecisionPath
-        --                                             (actWithoutFurtherReadings
-        --                                                 ( "Click the tree entry representing the fleet hangar."
-        --                                                 , fleetHangar |> clickOnUIElement MouseButtonLeft
-        --                                                 )
-        --                                             )
-
-        --                                 )
+                                                        )
                                         
 
 inSpaceWithFleetHangarSelected : BotDecisionContext -> SeeUndockingComplete -> EveOnline.ParseUserInterface.InventoryWindow -> DecisionPathNode
