@@ -20,7 +20,7 @@ import Common.Basics exposing (listElementAtWrappedIndex)
 import Common.DecisionTree exposing (describeBranch, endDecisionPath)
 import Common.EffectOnWindow as EffectOnWindow exposing (MouseButton(..))
 import Dict
-import elm/random
+import Random
 import EveOnline.AppFramework
     exposing
         ( AppEffect(..)
