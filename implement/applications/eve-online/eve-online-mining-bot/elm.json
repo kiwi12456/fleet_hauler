@@ -21,7 +21,6 @@
             "elm/parser": "1.1.0",
             "elm/time": "1.0.0",
             "rtfeldman/elm-hex": "1.0.0",
-            "elm/random": "1.0.0",
             "rtfeldman/elm-iso8601-date-strings": "1.1.3"
         }
     },
