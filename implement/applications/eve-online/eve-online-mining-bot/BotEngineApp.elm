@@ -1642,6 +1642,7 @@ activeShipTreeEntryFromInventoryWindow =
 topmostAsteroidFromOverviewWindow : ReadingFromGameClient -> Maybe OverviewWindowEntry
 topmostAsteroidFromOverviewWindow =
     overviewWindowEntriesRepresentingAsteroids
+        >> List.range 1 5
         >> List.sortBy (.uiNode >> .totalDisplayRegion >> .y)
         >> List.head
 
