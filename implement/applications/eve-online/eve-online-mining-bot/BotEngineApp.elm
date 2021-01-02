@@ -770,7 +770,7 @@ unlockTargetsNotForMining context =
 
 travelToMiningSiteAndLaunchDronesAndTargetAsteroid : BotDecisionContext -> DecisionPathNode
 travelToMiningSiteAndLaunchDronesAndTargetAsteroid context =
-    case context.readingFromGameClient |> topmostAsteroidFromOverviewWindow of
+    case context |> topmostAsteroidFromOverviewWindow of
         Nothing ->
             describeBranch "I see no asteroid in the overview. Warp to mining site."
                 (returnDronesToBay context.readingFromGameClient
@@ -1640,7 +1640,7 @@ activeShipTreeEntryFromInventoryWindow =
         >> List.head
 
 
-topmostAsteroidFromOverviewWindow : ReadingFromGameClient -> Maybe OverviewWindowEntry
+topmostAsteroidFromOverviewWindow : BotDecisionContext -> Maybe OverviewWindowEntry
 topmostAsteroidFromOverviewWindow =
     overviewWindowEntriesRepresentingAsteroids
         >> List.take (context.eventContext.timeInMilliseconds |> modBy 5)
@@ -1649,7 +1649,7 @@ topmostAsteroidFromOverviewWindow =
         >> List.head
 
 
-overviewWindowEntriesRepresentingAsteroids : ReadingFromGameClient -> List OverviewWindowEntry
+overviewWindowEntriesRepresentingAsteroids : BotDecisionContext -> List OverviewWindowEntry
 overviewWindowEntriesRepresentingAsteroids =
     .overviewWindow
         >> Maybe.map (.entries >> List.filter overviewWindowEntryRepresentsAnAsteroid)
